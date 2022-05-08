@@ -137,12 +137,12 @@ class LSTM_Model():
                   validation_data = self.p_test, validation_steps = self.validation_steps,
                   verbose = self.verbose)
 
-    def plot_test_values(self, xtest, ytest):
+    def infer_values(self, xtest, ytest, ts):
         self.pred = []
         self.pred_update = []
         self.usetest = xtest.copy()
         for i in range(self.values):
-            self.y_pred = self.model.predict(xtest[i,:,:].reshape(1,xtest.shape[1],xtest.shape[2]))[0][0]
+            self.y_pred = self.model.predict(xtest[i,:,:].reshape(1,xtest.shape[1],xtest.shape[2]))[0][:]
             # y_pred_update = model.predict(usetest[i,:,:].reshape(1,xtest.shape[1],xtest.shape[2]))[0][0]
             self.pred.append(self.y_pred)
             # pred_update.append(y_pred_update)
@@ -151,32 +151,37 @@ class LSTM_Model():
             # print(xtest[i,-values+1:,:].T,y_pred)
             # print(usetest[i,-values+1:,:].T,xtest[i,-values+1:,:].T)
         plt.figure()
+        self.pred = np.array(self.pred)
+
+    def plot_test_values(self):
         if self.forward_look>1:
-            plt.plot(ytest[:self.values-1,0,0],label='actual')
-            plt.plot(self.pred[1:],label='predicted')
+            plt.plot(self.yt[:self.values-1,0,0],label='actual (%s)'%self.ts)
+            plt.plot(self.pred[1:,0],label='predicted (%s)'%self.ts)
             # plt.plot(pred_update[1:],label='predicted (update)')
-            self.RMS_error = (np.mean(((ytest[:self.values-1,0,0]-self.pred[1:])/(ytest[:self.values-1,0,0]))**2))**0.5
+            self.RMS_error = (np.mean(((self.yt[:self.values-1,0,0]-self.pred[1:,0])/(self.yt[:self.values-1,0,0]))**2))**0.5
         else:
-            plt.plot(ytest[:self.values-1],label='actual')
-            plt.plot(self.pred[1:],label='predicted')
-            # plt.plot(pred_update[1:],label='predicted (update)')
-            self.RMS_error = (np.mean(((ytest[:self.values-1]-self.pred[1:])/(ytest[:self.values-1]))**2))**0.5
+            plt.plot(self.yt[:self.values-1],label='actual (%s)'%self.ts)
+            plt.plot(self.pred[1:],label='predicted (%s)'%self.ts)
+            # plt.plot(pred_updates[1:],label='predicted (update)')
+            self.RMS_error = (np.mean(((self.yt[:self.values-1]-self.pred[1:])/(self.yt[:self.values-1]))**2))**0.5
+        plt.title('The relative RMS error is %f'%self.RMS_error)
         plt.legend()
         print('The relative RMS error is %f'%self.RMS_error)
 
-    def full_workflow(self):
+    def full_workflow(self, model = None):
         self.get_ticker_values()
         self.prepare_test_train()
         self.model_LSTM()
-
-    def full_workflow_and_plot(self, xtest = None, ytest = None):
-        self.full_workflow()
-        if xtest is None:
+        if model is None:
             self.xt = self.xtest
-        else:
-            self.xt = xtest
-        if ytest is None:
             self.yt = self.ytest
+            self.ts = self.tickerSymbol
         else:
-            self.yt = ytest
-        self.plot_test_values(self.xt, self.yt)
+            self.xt = model.xtest
+            self.yt = model.ytest
+            self.ts = model.tickerSymbol
+        self.infer_values(self.xt, self.yt, self.ts)
+
+    def full_workflow_and_plot(self, model = None):
+        self.full_workflow(model = model)
+        self.plot_test_values()
