@@ -21,15 +21,37 @@ values = 200            # Future days that you want to plot for (computed one da
 ticker_dict, tickerSymbols = get_categorical_tickers()
 start="2010-01-01"
 end="2019-12-31"
+##############################################
 tickeranalysis = tickerSymbols[0]
-
 LSTM_1 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True)
 LSTM_1.full_workflow_and_plot()
 
+
+'''
 LSTM_2 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0)
 LSTM_2.full_workflow_and_plot()
 
 LSTM_3 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 1)
 LSTM_3.full_workflow_and_plot()
+############################################
+tickeranalysis = tickerSymbols[1]
+LSTM_4 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True)
+LSTM_4.full_workflow_and_plot()
 
+LSTM_5 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0)
+LSTM_5.full_workflow_and_plot()
+
+LSTM_6 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 1)
+LSTM_6.full_workflow_and_plot()
+#####################################
+tickeranalysis = tickerSymbols[2]
+LSTM_7 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True)
+LSTM_7.full_workflow_and_plot()
+
+LSTM_8 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0)
+LSTM_8.full_workflow_and_plot()
+
+LSTM_9 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 1)
+LSTM_9.full_workflow_and_plot()
+'''
 plt.show()
