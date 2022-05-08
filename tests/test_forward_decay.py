@@ -35,7 +35,9 @@ LSTM_2.full_workflow_and_plot()
 plt.figure(3)
 plot_handle =np.zeros(fwd)
 for i in range(LSTM_2.values - fwd - 1):
-    plot_handle += (1/(LSTM_2.values - fwd - 1))*LSTM_2.pred[np.linspace(i,fwd+i-1,fwd,dtype=int),np.linspace(fwd-1+i,i,fwd,dtype=int)]
+    plot_vec = LSTM_2.pred[np.linspace(i,fwd+i-1,fwd,dtype=int),np.linspace(fwd-1,0,fwd,dtype=int)]
+    plot_handle += (1/(LSTM_2.values - fwd - 1))*plot_vec/plot_vec[-1]
+
 
 plt.plot(plot_handle)
 #plt.plot(LSTM_2.pred[np.linspace(0,fwd-1,fwd,dtype=int),np.linspace(fwd-1,0,fwd,dtype=int)])
