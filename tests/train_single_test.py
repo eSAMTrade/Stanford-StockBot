@@ -27,7 +27,6 @@ LSTM_1 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, dep
 LSTM_1.full_workflow_and_plot()
 
 
-'''
 LSTM_2 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0)
 LSTM_2.full_workflow_and_plot()
 
@@ -53,5 +52,5 @@ LSTM_8.full_workflow_and_plot()
 
 LSTM_9 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 1)
 LSTM_9.full_workflow_and_plot()
-'''
+
 plt.show()
