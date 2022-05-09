@@ -143,29 +143,32 @@ class LSTM_Model():
         self.usetest = xtest.copy()
         for i in range(self.values):
             self.y_pred = self.model.predict(xtest[i,:,:].reshape(1,xtest.shape[1],xtest.shape[2]))[0][:]
-            # y_pred_update = model.predict(usetest[i,:,:].reshape(1,xtest.shape[1],xtest.shape[2]))[0][0]
+            self.y_pred_update = self.model.predict(self.usetest[i,:,:].reshape(1,xtest.shape[1],xtest.shape[2]))[0][:]
             self.pred.append(self.y_pred)
-            # pred_update.append(y_pred_update)
-            # usetest[i+1,-1,:] = ytest[i]
-            # usetest[np.linspace(i+1,i+past_history,past_history,dtype=int),np.linspace(past_history-1,0,past_history,dtype=int),:] =  y_pred_update[0]
-            # print(xtest[i,-values+1:,:].T,y_pred)
-            # print(usetest[i,-values+1:,:].T,xtest[i,-values+1:,:].T)
-        plt.figure()
+            self.pred_update.append(self.y_pred_update)
+            self.usetest[np.linspace(i+1,i+self.past_history-1,self.past_history-1,dtype=int),np.linspace(self.past_history-2,0,self.past_history-1,dtype=int),:] =  self.y_pred_update[0]
         self.pred = np.array(self.pred)
-
+        self.pred_update = np.array(self.pred_update)
     def plot_test_values(self):
+        plt.figure()
         if self.forward_look>1:
             plt.plot(self.yt[:self.values-1,0,0],label='actual (%s)'%self.ts)
             plt.plot(self.pred[1:,0],label='predicted (%s)'%self.ts)
-            # plt.plot(pred_update[1:],label='predicted (update)')
-            self.RMS_error = (np.mean(((self.yt[:self.values-1,0,0]-self.pred[1:,0])/(self.yt[:self.values-1,0,0]))**2))**0.5
+            plt.plot(self.pred_update[1:,0],label='predicted (update)')
+            self.RMS_error = (np.mean(((self.yt[:self.values - 1, 0, 0] - self.pred[1:, 0]) / (self.yt[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+            plt.title('The relative RMS error is %f' % self.RMS_error)
+            plt.legend()
+            plt.figure()
+            plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
         else:
             plt.plot(self.yt[:self.values-1],label='actual (%s)'%self.ts)
             plt.plot(self.pred[1:],label='predicted (%s)'%self.ts)
-            # plt.plot(pred_updates[1:],label='predicted (update)')
+            plt.plot(self.pred_update[1:],label='predicted (update)')
             self.RMS_error = (np.mean(((self.yt[:self.values-1]-self.pred[1:])/(self.yt[:self.values-1]))**2))**0.5
-        plt.title('The relative RMS error is %f'%self.RMS_error)
-        plt.legend()
+            plt.title('The relative RMS error is %f' % self.RMS_error)
+            plt.legend()
+            plt.figure()
+            plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
         print('The relative RMS error is %f'%self.RMS_error)
 
     def full_workflow(self, model = None):
