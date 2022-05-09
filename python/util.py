@@ -37,6 +37,29 @@ def get_categorical_tickers():
     tickerSymbols = ['BRK-A', 'GOOG', 'MSFT']
     return ticker_dict, tickerSymbols
 
+def get_control_vector(val):
+    return np.diff(np.sign(np.diff(val)))
+def buy_and_sell_bot(val,controls):
+    inv = []
+    curr_val = 100
+    inds = np.where(controls)[0]
+    buy_inds = np.where(controls>0)[0]
+    sell_inds = np.where(controls<0)[0]
+    max_limit = sell_inds[-1] if sell_inds[-1]>buy_inds[-1] else buy_inds[-1]
+    for i in range(buy_inds[0]+2):
+        inv.append(curr_val)
+    for i in range(buy_inds[0],max_limit+1):
+        if controls[i]>0:
+            buy_val = val[i+1]
+        elif controls[i]<0:
+            sell_val = val[i+1]
+            curr_val = curr_val*sell_val/buy_val
+        inv.append(curr_val)
+    if max_limit+1!=len(controls):
+        for i in range(len(controls)-max_limit-1):
+            inv.append(curr_val)
+    return inv
+
 
 class LSTM_Model():
     def __init__(self,tickerSymbol, start, end,
@@ -158,8 +181,8 @@ class LSTM_Model():
             self.RMS_error = (np.mean(((self.yt[:self.values - 1, 0, 0] - self.pred[1:, 0]) / (self.yt[:self.values - 1, 0, 0])) ** 2)) ** 0.5
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.figure()
-            plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
+            #plt.figure()
+            #plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
         else:
             plt.plot(self.yt[:self.values-1],label='actual (%s)'%self.ts)
             plt.plot(self.pred[1:],label='predicted (%s)'%self.ts)
@@ -167,8 +190,8 @@ class LSTM_Model():
             self.RMS_error = (np.mean(((self.yt[:self.values-1]-self.pred[1:])/(self.yt[:self.values-1]))**2))**0.5
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.figure()
-            plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
+            #plt.figure()
+            #plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
         print('The relative RMS error is %f'%self.RMS_error)
 
     def full_workflow(self, model = None):
@@ -188,6 +211,28 @@ class LSTM_Model():
     def full_workflow_and_plot(self, model = None):
         self.full_workflow(model = model)
         self.plot_test_values()
+
+    def plot_bot_decision(self):
+        if self.forward_look > 1:
+            ideal = self.yt[:self.values - 1, 0, 0]
+            pred = np.asarray(self.pred[1:, 0]).reshape(-1,)
+            pred_update = np.asarray(self.pred_update[1:, 0]).reshape(-1,)
+        else:
+            ideal = self.yt[:self.values - 1]
+            pred = np.asarray(self.pred[1:]).reshape(-1,)
+            pred_update = np.asarray(self.pred_update[1:]).reshape(-1,)
+        control_ideal = get_control_vector(ideal)
+        control_pred = get_control_vector(pred)
+        control_pred_update = get_control_vector(pred_update)
+        bot_ideal = buy_and_sell_bot(ideal, control_ideal)
+        bot_pred = buy_and_sell_bot(ideal, control_pred)
+        bot_pred_update = buy_and_sell_bot(ideal, control_pred_update)
+        plt.figure()
+        plt.plot(bot_ideal, label='Ideal case (%.2f)'%bot_ideal[-1])
+        plt.plot(bot_pred, label='From prediction (%.2f)'%bot_pred[-1])
+        plt.plot(bot_pred_update, label='From prediction (updated) (%.2f)'%bot_pred_update[-1])
+        plt.plot(ideal / ideal[0] * 100.0, label='Stock value(%s)' % self.ts)
+        plt.legend()
 
 
 class LSTM_ED_Model():
