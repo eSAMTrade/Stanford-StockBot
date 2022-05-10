@@ -185,8 +185,12 @@ class LSTM_Model():
             plt.plot(self.yt[:self.values-1,0,0],label='actual (%s)'%self.ts)
             plt.plot(self.pred[1:,0],label='predicted (%s)'%self.ts)
             plt.plot(self.pred_update[1:,0],label='predicted (update)')
+            plt.xlabel("Days")
+            plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
+            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look))
             #plt.figure()
             #plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
         else:
