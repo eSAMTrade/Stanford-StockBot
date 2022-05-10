@@ -22,7 +22,7 @@ values = 200            # Future days that you want to plot for (computed one da
 ticker_dict, tickerSymbols = get_categorical_tickers()
 start="2010-01-01"
 end="2019-12-31"
-fwd = 20
+fwd = 5
 past = 60
 ##############################################
 tickeranalysis = tickerSymbols[0]
