@@ -65,7 +65,7 @@ class LSTM_Model():
     def __init__(self,tickerSymbol, start, end,
                  past_history = 60, forward_look = 1, train_test_split = 0.8, batch_size = 30,
                  epochs = 50, steps_per_epoch = 200, validation_steps = 50, verbose = 0,
-                 depth = 1, naive = False, values = 200):
+                 depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True):
         self.tickerSymbol = tickerSymbol
         self.start = start
         self.end = end
@@ -80,6 +80,8 @@ class LSTM_Model():
         self.values = values
         self.depth = depth
         self.naive = naive
+        self.plot_values = plot_values
+        self.plot_bot = plot_bot
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
         self.data = []
@@ -172,13 +174,17 @@ class LSTM_Model():
             self.usetest[np.linspace(i+1,i+self.past_history-1,self.past_history-1,dtype=int),np.linspace(self.past_history-2,0,self.past_history-1,dtype=int),:] =  self.y_pred_update[0]
         self.pred = np.array(self.pred)
         self.pred_update = np.array(self.pred_update)
+        if self.forward_look>1:
+            self.RMS_error = (np.mean(((self.ytest[:self.values - 1, 0, 0] - self.pred[1:, 0]) / (self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+        else:
+            self.RMS_error = (np.mean(((self.ytest[:self.values-1]-self.pred[1:])/(self.ytest[:self.values-1]))**2))**0.5
+
     def plot_test_values(self):
         plt.figure()
         if self.forward_look>1:
             plt.plot(self.yt[:self.values-1,0,0],label='actual (%s)'%self.ts)
             plt.plot(self.pred[1:,0],label='predicted (%s)'%self.ts)
             plt.plot(self.pred_update[1:,0],label='predicted (update)')
-            self.RMS_error = (np.mean(((self.yt[:self.values - 1, 0, 0] - self.pred[1:, 0]) / (self.yt[:self.values - 1, 0, 0])) ** 2)) ** 0.5
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
             #plt.figure()
@@ -187,9 +193,11 @@ class LSTM_Model():
             plt.plot(self.yt[:self.values-1],label='actual (%s)'%self.ts)
             plt.plot(self.pred[1:],label='predicted (%s)'%self.ts)
             plt.plot(self.pred_update[1:],label='predicted (update)')
-            self.RMS_error = (np.mean(((self.yt[:self.values-1]-self.pred[1:])/(self.yt[:self.values-1]))**2))**0.5
+            plt.xlabel("Days")
+            plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
+            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d.png'%(self.depth,int(self.naive), self.past_history, self.forward_look))
             #plt.figure()
             #plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
         print('The relative RMS error is %f'%self.RMS_error)
@@ -232,7 +240,10 @@ class LSTM_Model():
         plt.plot(bot_pred, label='From prediction (%.2f)'%bot_pred[-1])
         plt.plot(bot_pred_update, label='From prediction (updated) (%.2f)'%bot_pred_update[-1])
         plt.plot(ideal / ideal[0] * 100.0, label='Stock value(%s)' % self.ts)
+        plt.xlabel("Days")
+        plt.ylabel("Percentage growth")
         plt.legend()
+        plt.savefig('../images/Bot_prediction_%d_%d_%d_%d.png' % (self.depth, int(self.naive), self.past_history, self.forward_look))
 
 
 class LSTM_ED_Model():
