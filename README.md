@@ -17,14 +17,14 @@ python3 -m pip install -r py_requirements.txt
 
 ## Usage
 The predictions using a series of LSTM networks and for different tickers can be obtained by running:
-'''
+```
 python3 train_single_test.py
-'''
+```
 
 The convergence in the stock values as we move closer to the prediction day (in the case of multiple days being predicted at once) can be obtained using:
-'''
+```
 python3 test_forward_decay.py
-'''
+```
 
 ## Support
 For any support regarding the implementation of the source code, contact the developers at: shaswatm@stanford.edu, avijay@stanford.edu or nandan99@gmail.com
