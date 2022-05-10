@@ -30,8 +30,8 @@ python3 test_forward_decay.py
 For any support regarding the implementation of the source code, contact the developers at: shaswatm@stanford.edu, avijay@stanford.edu or nandan99@gmail.com
 
 ## Roadmap
-# Use related/all ticker values to predict a single stock value so that the perfromance of related or all stocks can be used to develop a more generalizable model.
-# Develop a bot that makes decisions based on closing prices and see how that compares against stock performances and popular ETFs. 
+* Use related/all ticker values to predict a single stock value so that the perfromance of related or all stocks can be used to develop a more generalizable model.
+* Develop a bot that makes decisions based on closing prices and see how that compares against stock performances and popular ETFs. 
 
 
 ## Contributing
