@@ -432,36 +432,36 @@ class LSTM_ED_Model():
 
         self.pred = np.array(self.pred)
         if self.forward_look>1:
-            self.RMS_error = (np.mean(((self.ytest[:self.values - 1, 0, 0] - self.pred[1:, 0]) / (self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+            self.RMS_error = (np.mean(((np.squeeze(self.ytest[:self.values, 0, 0]) - np.squeeze(self.pred[:, 0, 0])) / (np.squeeze(self.ytest[:self.values, 0, 0])) ** 2))) ** 0.5
         else:
-            self.RMS_error = (np.mean(((self.ytest[:self.values-1]-self.pred[1:])/(self.ytest[:self.values-1]))**2))**0.5
+            self.RMS_error = (np.mean(((self.ytest[:self.values]-self.pred[:, 0, 0])/(self.ytest[:self.values]))**2))**0.5
 
     def plot_test_values(self):
         plt.figure()
         if self.forward_look > 1:
-            plt.plot(self.ytest[:self.values - 1, 0, 0], label='actual (%s)' % self.ts)
-            plt.plot(self.pred[0,1:, 0], label='predicted (%s)' % self.ts)
-            plt.plot(self.pred_update[1:, 0], label='predicted (update)')
+            print("Sorry, still working on this\n")
+            # plt.plot(self.ytest[:self.values, 0, 0],'*-', label='actual (%s)' % self.ts)
+            # plt.plot(self.pred[:,0,0],'o-', label='predicted (%s)' % self.ts)
+            # # plt.plot(self.pred_update[1:, 0], label='predicted (update)')
+            # plt.xlabel("Days")
+            # plt.ylabel("Normalized stock price")
+            # plt.title('The relative RMS error is %f' % self.RMS_error)
+            # plt.legend()
+            # plt.savefig('../images/ED_Stock_prediction_%d_%d_%d_%d_%s.png' % (
+            #     self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+            # plt.figure()
+            # plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
+        else:
+            plt.plot(self.ytest[:self.values, 0, 0], '*-', label='actual (%s)' % self.ts)
+            plt.plot(self.pred[:, 0, 0], 'o-', label='predicted (%s)' % self.ts)
+            # plt.plot(self.pred_update[1:, 0], label='predicted (update)')
             plt.xlabel("Days")
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
             plt.savefig('../images/ED_Stock_prediction_%d_%d_%d_%d_%s.png' % (
                 self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
-            # plt.figure()
-            # plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
-        else:
-            plt.plot(self.ytest[:self.values - 1,0,0], label='actual (%s)' % self.ts)
-            plt.plot(self.pred[0,1:,0], label='predicted (%s)' % self.ts)
-            # plt.plot(np.asarray(self.pred_update)[0,1:,0], label='predicted (update)')
-            plt.xlabel("Days")
-            plt.ylabel("Normalized stock price")
-            plt.title('The relative RMS error is %f' % self.RMS_error)
-            plt.legend()
-            plt.savefig('../images/ED_Stock_prediction_%d_%d_%d_%d_%s.png' % (
-            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
-            # plt.figure()
-            # plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
+
         print('The relative RMS error is %f' % self.RMS_error)
 
     def full_workflow(self, model=None):
