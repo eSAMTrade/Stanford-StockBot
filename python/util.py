@@ -189,8 +189,8 @@ class LSTM_Model():
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d.png' % (
-            self.depth, int(self.naive), self.past_history, self.forward_look))
+            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
             #plt.figure()
             #plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
         else:
@@ -201,7 +201,7 @@ class LSTM_Model():
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d.png'%(self.depth,int(self.naive), self.past_history, self.forward_look))
+            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s.png'%(self.depth,int(self.naive), self.past_history, self.forward_look, self.ts))
             #plt.figure()
             #plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
         print('The relative RMS error is %f'%self.RMS_error)
@@ -247,7 +247,7 @@ class LSTM_Model():
         plt.xlabel("Days")
         plt.ylabel("Percentage growth")
         plt.legend()
-        plt.savefig('../images/Bot_prediction_%d_%d_%d_%d.png' % (self.depth, int(self.naive), self.past_history, self.forward_look))
+        plt.savefig('../images/Bot_prediction_%d_%d_%d_%d_%s.png' % (self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
 
 
 class LSTM_ED_Model():
