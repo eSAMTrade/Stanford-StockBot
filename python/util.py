@@ -369,8 +369,10 @@ class LSTM_ED_Model():
         self.model = keras.Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
         # configure model for training.
+        # self.model.compile(optimizer='Adam',
+        #               loss='mean_absolute_percentage_error')
         self.model.compile(optimizer='Adam',
-                      loss='mean_absolute_percentage_error')
+                           loss='mse')
         self.create_p_test_train()
         self.history = self.model.fit(self.p_train,
                                  epochs=self.epochs,
@@ -405,15 +407,32 @@ class LSTM_ED_Model():
 
     def infer_values(self, xtest, ytest, ts):
         self.model_inference_LSTM()
+<<<<<<< Updated upstream
         states_value = self.encoder_model.predict(xtest)
         decoder_input = xtest[:, -1, :]  # choosing the most recent value to feed the decoder
+=======
+>>>>>>> Stashed changes
         self.pred = []
         self.pred_update = []
         self.usetest = xtest.copy()
+
+        # Predict encoder for x_test to get decoder inputs. Iteratively predict decoder output.
+        # This one is incomplete.
+        states_value = encoder_model.predict(xtest)
+        decoder_input = xtest[:, -1, :]  # choosing the most recent value to feed the decoder
         for i in range(self.values):
             new_pred, h, c = self.decoder_model.predict([decoder_input] + states_value)
             y_pred = new_pred.reshape((-1, 1))
             decoder_input = new_pred
+            states_value = [h, c]
+            self.pred_update.append(y_pred)
+
+        # Predict encoder for x_test to get decoder inputs and use it for the decoder for one extra day.
+        for i in range(self.values):
+            states_value = encoder_model.predict(xtest[i, :, :])
+            decoder_input = xtest[i, -1, :]  # choosing the most recent value to feed the decoder
+            new_pred, h, c = decoder_model.predict([decoder_input] + states_value)
+            y_pred = new_pred.reshape((-1, 1))
             states_value = [h, c]
             self.pred.append(y_pred)
 
