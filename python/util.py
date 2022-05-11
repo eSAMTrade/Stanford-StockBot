@@ -7,7 +7,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, LSTM
-
+from tensorflow import keras
 
 def get_categorical_tickers():
     ticker_dict = {}
@@ -284,8 +284,8 @@ class LSTM_ED_Model():
             iEnd = len(dataset) - forward_look
         for i in range(iStart, iEnd):
             indices_x = range(i - sHistory, i)  # set the order
-            indices_x_dec = range(i-1, i + sFuture-1)
-            indices_y_dec = range(i, i + sFuture)
+            indices_x_dec = range(i-1, i + forward_look-1)
+            indices_y_dec = range(i, i + forward_look)
             reshape_entity_x = np.asarray([])
             reshape_entity_x = np.append(reshape_entity_x, dataset[indices_x])  # Comment this out if there are multiple identifiers in the feature vector
             reshape_entity_x_dec = np.asarray([])
@@ -333,16 +333,16 @@ class LSTM_ED_Model():
         training_std = self.y[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
         self.y = (self.y - training_mean) / training_std  # prep data, use mean and standard deviation to maintain distribution and ratios
         self.data_preprocess(self.y, 0, training_size, self.past_history, forward_look = self.forward_look)
-        self.xtrain_enc, self.xtrain_dec, self.ytrain = self.data_enc, self.data_dec, self.target
+        self.xtrain, self.xtrain_dec, self.ytrain = self.data_enc, self.data_dec, self.target
         self.data_preprocess(self.y, training_size, None, self.past_history, forward_look = self.forward_look)
-        self.xtest_enc, self.xtest_dec, self.ytest = self.data_enc, self.data_dec, self.target
+        self.xtest, self.xtest_dec, self.ytest = self.data_enc, self.data_dec, self.target
 
     def create_p_test_train(self):
         BATCH_SIZE = self.batch_size
         BUFFER_SIZE = self.y.size
-        p_train = tf.data.Dataset.from_tensor_slices(((self.xtrain_enc, self.xtrain_dec), self.ytrain))
+        p_train = tf.data.Dataset.from_tensor_slices(((self.xtrain, self.xtrain_dec), self.ytrain))
         self.p_train = p_train.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE, drop_remainder=True).repeat()
-        p_test = tf.data.Dataset.from_tensor_slices(((self.xtest_enc, self.xtest_dec), self.ytest))
+        p_test = tf.data.Dataset.from_tensor_slices(((self.xtest, self.xtest_dec), self.ytest))
         self.p_test = p_test.batch(BATCH_SIZE).repeat()
 
     def model_LSTM(self):
@@ -372,7 +372,7 @@ class LSTM_ED_Model():
         self.model.compile(optimizer='Adam',
                       loss='mean_absolute_percentage_error')
         self.create_p_test_train()
-        self.history = self.model.fit(p_train,
+        self.history = self.model.fit(self.p_train,
                                  epochs=self.epochs,
                                  batch_size=self.batch_size,
                                  steps_per_epoch=self.steps_per_epoch,
@@ -380,24 +380,6 @@ class LSTM_ED_Model():
                                  validation_steps=self.validation_steps,
                                  verbose=self.verbose)
 
-
-        # self.model = tf.keras.models.Sequential()
-        # if self.naive:
-        #     self.model.add(tf.keras.layers.LSTM(self.LSTM_latent_dim, input_shape = self.xtrain.shape[-2:]))
-        # else:
-        #     self.model.add(tf.keras.layers.LSTM(self.LSTM_latent_dim, return_sequences=True, input_shape = self.xtrain.shape[-2:]))
-        # for i in range(self.depth):
-        #     self.model.add(tf.keras.layers.LSTM(self.LSTM_latent_dim, return_sequences=True))
-        # if self.naive is False:
-        #     self.model.add(tf.keras.layers.LSTM(self.LSTM_latent_dim))
-        # self.model.add(tf.keras.layers.Dense(self.forward_look))
-        #
-        # self.model.compile(optimizer='Adam',
-        #               loss='mse')
-        # self.create_p_test_train()
-        # self.model.fit(self.p_train, epochs = self.epochs, steps_per_epoch = self.steps_per_epoch,
-        #           validation_data = self.p_test, validation_steps = self.validation_steps,
-        #           verbose = self.verbose)
     def model_inference_LSTM(self):
         latent_dim = self.LSTM_latent_dim
 
@@ -420,47 +402,96 @@ class LSTM_ED_Model():
         self.decoder_model = keras.Model(
             [decoder_inputs] + decoder_states_inputs, [decoder_outputs] + decoder_states
         )
-    def plot_test_values(self, xtest, ytest):
+
+    def infer_values(self, xtest, ytest, ts):
+        self.model_inference_LSTM()
+        states_value = encoder_model.predict(xtest)
+        decoder_input = xtest[:, -1, :]  # choosing the most recent value to feed the decoder
         self.pred = []
         self.pred_update = []
         self.usetest = xtest.copy()
-
         for i in range(self.values):
-            self.y_pred = self.model.predict(xtest[i,:,:].reshape(1,xtest.shape[1],xtest.shape[2]))[0][0]
-            # y_pred_update = model.predict(usetest[i,:,:].reshape(1,xtest.shape[1],xtest.shape[2]))[0][0]
-            self.pred.append(self.y_pred)
-            # pred_update.append(y_pred_update)
-            # usetest[i+1,-1,:] = ytest[i]
-            # usetest[np.linspace(i+1,i+past_history,past_history,dtype=int),np.linspace(past_history-1,0,past_history,dtype=int),:] =  y_pred_update[0]
-            # print(xtest[i,-values+1:,:].T,y_pred)
-            # print(usetest[i,-values+1:,:].T,xtest[i,-values+1:,:].T)
-        plt.figure()
-        if self.forward_look>1:
-            plt.plot(ytest[:self.values-1,0,0],label='actual')
-            plt.plot(self.pred[1:],label='predicted')
-            # plt.plot(pred_update[1:],label='predicted (update)')
-            self.RMS_error = (np.mean(((ytest[:self.values-1,0,0]-self.pred[1:])/(ytest[:self.values-1,0,0]))**2))**0.5
-        else:
-            plt.plot(ytest[:self.values-1],label='actual')
-            plt.plot(self.pred[1:],label='predicted')
-            # plt.plot(pred_update[1:],label='predicted (update)')
-            self.RMS_error = (np.mean(((ytest[:self.values-1]-self.pred[1:])/(ytest[:self.values-1]))**2))**0.5
-        plt.legend()
-        print('The relative RMS error is %f'%self.RMS_error)
+            new_pred, h, c = decoder_model.predict([decoder_input] + states_value)
+            y_pred = new_pred.reshape((-1, 1))
+            decoder_input = new_pred
+            states_value = [h, c]
+            self.pred.append(y_pred)
 
-    def full_workflow(self):
+        self.pred = np.array(self.pred)
+        if self.forward_look>1:
+            self.RMS_error = (np.mean(((self.ytest[:self.values - 1, 0, 0] - self.pred[1:, 0]) / (self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+        else:
+            self.RMS_error = (np.mean(((self.ytest[:self.values-1]-self.pred[1:])/(self.ytest[:self.values-1]))**2))**0.5
+
+    def plot_test_values(self, xtest, ytest):
+
+        plt.figure()
+        if self.forward_look > 1:
+            plt.plot(self.yt[:self.values - 1, 0, 0], label='actual (%s)' % self.ts)
+            plt.plot(self.pred[1:, 0], label='predicted (%s)' % self.ts)
+            plt.plot(self.pred_update[1:, 0], label='predicted (update)')
+            plt.xlabel("Days")
+            plt.ylabel("Normalized stock price")
+            plt.title('The relative RMS error is %f' % self.RMS_error)
+            plt.legend()
+            plt.savefig('../images/ED_Stock_prediction_%d_%d_%d_%d.png' % (
+                self.depth, int(self.naive), self.past_history, self.forward_look))
+            # plt.figure()
+            # plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
+        else:
+            plt.plot(self.yt[:self.values - 1], label='actual (%s)' % self.ts)
+            plt.plot(self.pred[1:], label='predicted (%s)' % self.ts)
+            plt.plot(self.pred_update[1:], label='predicted (update)')
+            plt.xlabel("Days")
+            plt.ylabel("Normalized stock price")
+            plt.title('The relative RMS error is %f' % self.RMS_error)
+            plt.legend()
+            plt.savefig('../images/ED_Stock_prediction_%d_%d_%d_%d.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look))
+            # plt.figure()
+            # plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
+        print('The relative RMS error is %f' % self.RMS_error)
+
+    def full_workflow(self, model=None):
         self.get_ticker_values()
         self.prepare_test_train()
         self.model_LSTM()
-
-    def full_workflow_and_plot(self, xtest = None, ytest = None):
-        self.full_workflow()
-        if xtest is None:
+        if model is None:
             self.xt = self.xtest
-        else:
-            self.xt = xtest
-        if ytest is None:
             self.yt = self.ytest
+            self.ts = self.tickerSymbol
         else:
-            self.yt = ytest
-        self.plot_test_values(self.xt, self.yt)
+            self.xt = model.xtest
+            self.yt = model.ytest
+            self.ts = model.tickerSymbol
+        self.infer_values(self.xt, self.yt, self.ts)
+
+    def full_workflow_and_plot(self, model=None):
+        self.full_workflow(model=model)
+        self.plot_test_values()
+
+    def plot_bot_decision(self):
+        if self.forward_look > 1:
+            ideal = self.yt[:self.values - 1, 0, 0]
+            pred = np.asarray(self.pred[1:, 0]).reshape(-1, )
+            pred_update = np.asarray(self.pred_update[1:, 0]).reshape(-1, )
+        else:
+            ideal = self.yt[:self.values - 1]
+            pred = np.asarray(self.pred[1:]).reshape(-1, )
+            pred_update = np.asarray(self.pred_update[1:]).reshape(-1, )
+        control_ideal = get_control_vector(ideal)
+        control_pred = get_control_vector(pred)
+        control_pred_update = get_control_vector(pred_update)
+        bot_ideal = buy_and_sell_bot(ideal, control_ideal)
+        bot_pred = buy_and_sell_bot(ideal, control_pred)
+        bot_pred_update = buy_and_sell_bot(ideal, control_pred_update)
+        plt.figure()
+        plt.plot(bot_ideal, label='Ideal case (%.2f)' % bot_ideal[-1])
+        plt.plot(bot_pred, label='From prediction (%.2f)' % bot_pred[-1])
+        plt.plot(bot_pred_update, label='From prediction (updated) (%.2f)' % bot_pred_update[-1])
+        plt.plot(ideal / ideal[0] * 100.0, label='Stock value(%s)' % self.ts)
+        plt.xlabel("Days")
+        plt.ylabel("Percentage growth")
+        plt.legend()
+        plt.savefig('../images/ED_Bot_prediction_%d_%d_%d_%d.png' % (
+        self.depth, int(self.naive), self.past_history, self.forward_look))
