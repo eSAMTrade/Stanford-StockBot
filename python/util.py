@@ -406,32 +406,26 @@ class LSTM_ED_Model():
         )
 
     def infer_values(self, xtest, ytest, ts):
-        self.model_inference_LSTM()
-<<<<<<< Updated upstream
-        states_value = self.encoder_model.predict(xtest)
-        decoder_input = xtest[:, -1, :]  # choosing the most recent value to feed the decoder
-=======
->>>>>>> Stashed changes
         self.pred = []
         self.pred_update = []
         self.usetest = xtest.copy()
 
         # Predict encoder for x_test to get decoder inputs. Iteratively predict decoder output.
         # This one is incomplete.
-        states_value = encoder_model.predict(xtest)
-        decoder_input = xtest[:, -1, :]  # choosing the most recent value to feed the decoder
-        for i in range(self.values):
-            new_pred, h, c = self.decoder_model.predict([decoder_input] + states_value)
-            y_pred = new_pred.reshape((-1, 1))
-            decoder_input = new_pred
-            states_value = [h, c]
-            self.pred_update.append(y_pred)
+        # states_value = encoder_model.predict(xtest)
+        # decoder_input = xtest[:, -1, :]  # choosing the most recent value to feed the decoder
+        # for i in range(self.values):
+        #     new_pred, h, c = self.decoder_model.predict([decoder_input] + states_value)
+        #     y_pred = new_pred.reshape((-1, 1))
+        #     decoder_input = new_pred
+        #     states_value = [h, c]
+        #     self.pred_update.append(y_pred)
 
         # Predict encoder for x_test to get decoder inputs and use it for the decoder for one extra day.
         for i in range(self.values):
-            states_value = encoder_model.predict(xtest[i, :, :])
-            decoder_input = xtest[i, -1, :]  # choosing the most recent value to feed the decoder
-            new_pred, h, c = decoder_model.predict([decoder_input] + states_value)
+            states_value = self.encoder_model.predict(xtest[i:i+1, :, :])
+            decoder_input = xtest[i:i+1, -1, :]  # choosing the most recent value to feed the decoder
+            new_pred, h, c = self.decoder_model.predict([decoder_input] + states_value)
             y_pred = new_pred.reshape((-1, 1))
             states_value = [h, c]
             self.pred.append(y_pred)
@@ -443,7 +437,6 @@ class LSTM_ED_Model():
             self.RMS_error = (np.mean(((self.ytest[:self.values-1]-self.pred[1:])/(self.ytest[:self.values-1]))**2))**0.5
 
     def plot_test_values(self):
-
         plt.figure()
         if self.forward_look > 1:
             plt.plot(self.ytest[:self.values - 1, 0, 0], label='actual (%s)' % self.ts)
@@ -453,8 +446,8 @@ class LSTM_ED_Model():
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.savefig('../images/ED_Stock_prediction_%d_%d_%d_%d.png' % (
-                self.depth, int(self.naive), self.past_history, self.forward_look))
+            plt.savefig('../images/ED_Stock_prediction_%d_%d_%d_%d_%s.png' % (
+                self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
             # plt.figure()
             # plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
         else:
@@ -465,8 +458,8 @@ class LSTM_ED_Model():
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.savefig('../images/ED_Stock_prediction_%d_%d_%d_%d.png' % (
-            self.depth, int(self.naive), self.past_history, self.forward_look))
+            plt.savefig('../images/ED_Stock_prediction_%d_%d_%d_%d_%s.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
             # plt.figure()
             # plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
         print('The relative RMS error is %f' % self.RMS_error)
@@ -475,6 +468,7 @@ class LSTM_ED_Model():
         self.get_ticker_values()
         self.prepare_test_train()
         self.model_LSTM()
+        self.model_inference_LSTM()
         if model is None:
             self.xt = self.xtest
             self.yt = self.ytest
