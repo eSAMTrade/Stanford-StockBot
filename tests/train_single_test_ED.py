@@ -27,6 +27,6 @@ end="2019-12-31"
 tickeranalysis = tickerSymbols[0]
 LSTM_1 = LSTM_ED_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True)
 LSTM_1.full_workflow_and_plot()
-LSTM_1.plot_bot_decision()
+# LSTM_1.plot_bot_decision()
 
 plt.show()
