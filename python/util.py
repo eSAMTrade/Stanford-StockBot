@@ -423,7 +423,7 @@ class LSTM_ED_Model():
         else:
             self.RMS_error = (np.mean(((self.ytest[:self.values-1]-self.pred[1:])/(self.ytest[:self.values-1]))**2))**0.5
 
-    def plot_test_values(self, xtest, ytest):
+    def plot_test_values(self):
 
         plt.figure()
         if self.forward_look > 1:
@@ -468,7 +468,7 @@ class LSTM_ED_Model():
 
     def full_workflow_and_plot(self, model=None):
         self.full_workflow(model=model)
-        self.plot_test_values(self.xtest,self.ytest)
+        self.plot_test_values()
 
     def plot_bot_decision(self):
         if self.forward_look > 1:
