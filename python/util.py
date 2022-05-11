@@ -384,7 +384,7 @@ class LSTM_ED_Model():
         latent_dim = self.LSTM_latent_dim
 
         encoder_inputs = self.model.input[0]  # input_1
-        encoder_outputs, state_h_enc, state_c_enc = model.layers[2].output  # lstm_1
+        encoder_outputs, state_h_enc, state_c_enc = self.model.layers[2].output  # lstm_1
         encoder_states = [state_h_enc, state_c_enc]
         self.encoder_model = keras.Model(encoder_inputs, encoder_states)
 
@@ -405,13 +405,13 @@ class LSTM_ED_Model():
 
     def infer_values(self, xtest, ytest, ts):
         self.model_inference_LSTM()
-        states_value = encoder_model.predict(xtest)
+        states_value = self.encoder_model.predict(xtest)
         decoder_input = xtest[:, -1, :]  # choosing the most recent value to feed the decoder
         self.pred = []
         self.pred_update = []
         self.usetest = xtest.copy()
         for i in range(self.values):
-            new_pred, h, c = decoder_model.predict([decoder_input] + states_value)
+            new_pred, h, c = self.decoder_model.predict([decoder_input] + states_value)
             y_pred = new_pred.reshape((-1, 1))
             decoder_input = new_pred
             states_value = [h, c]
@@ -427,8 +427,8 @@ class LSTM_ED_Model():
 
         plt.figure()
         if self.forward_look > 1:
-            plt.plot(self.yt[:self.values - 1, 0, 0], label='actual (%s)' % self.ts)
-            plt.plot(self.pred[1:, 0], label='predicted (%s)' % self.ts)
+            plt.plot(self.ytest[:self.values - 1, 0, 0], label='actual (%s)' % self.ts)
+            plt.plot(self.pred[0,1:, 0], label='predicted (%s)' % self.ts)
             plt.plot(self.pred_update[1:, 0], label='predicted (update)')
             plt.xlabel("Days")
             plt.ylabel("Normalized stock price")
@@ -439,9 +439,9 @@ class LSTM_ED_Model():
             # plt.figure()
             # plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
         else:
-            plt.plot(self.yt[:self.values - 1], label='actual (%s)' % self.ts)
-            plt.plot(self.pred[1:], label='predicted (%s)' % self.ts)
-            plt.plot(self.pred_update[1:], label='predicted (update)')
+            plt.plot(self.ytest[:self.values - 1,0,0], label='actual (%s)' % self.ts)
+            plt.plot(self.pred[0,1:,0], label='predicted (%s)' % self.ts)
+            # plt.plot(np.asarray(self.pred_update)[0,1:,0], label='predicted (update)')
             plt.xlabel("Days")
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
@@ -468,27 +468,27 @@ class LSTM_ED_Model():
 
     def full_workflow_and_plot(self, model=None):
         self.full_workflow(model=model)
-        self.plot_test_values()
+        self.plot_test_values(self.xtest,self.ytest)
 
     def plot_bot_decision(self):
         if self.forward_look > 1:
-            ideal = self.yt[:self.values - 1, 0, 0]
-            pred = np.asarray(self.pred[1:, 0]).reshape(-1, )
-            pred_update = np.asarray(self.pred_update[1:, 0]).reshape(-1, )
+            ideal = self.ytest[:self.values - 1, 0, 0]
+            pred = np.asarray(self.pred[0,1:, 0]).reshape(-1, )
+            # pred_update = np.asarray(self.pred_update[1:, 0]).reshape(-1, )
         else:
-            ideal = self.yt[:self.values - 1]
-            pred = np.asarray(self.pred[1:]).reshape(-1, )
-            pred_update = np.asarray(self.pred_update[1:]).reshape(-1, )
+            ideal = self.ytest[:self.values - 1,0,0]
+            pred = np.asarray(self.pred[0,1:,0]).reshape(-1, )
+            # pred_update = np.asarray(self.pred_update[1:]).reshape(-1, )
         control_ideal = get_control_vector(ideal)
         control_pred = get_control_vector(pred)
-        control_pred_update = get_control_vector(pred_update)
+        # control_pred_update = get_control_vector(pred_update)
         bot_ideal = buy_and_sell_bot(ideal, control_ideal)
         bot_pred = buy_and_sell_bot(ideal, control_pred)
-        bot_pred_update = buy_and_sell_bot(ideal, control_pred_update)
+        # bot_pred_update = buy_and_sell_bot(ideal, control_pred_update)
         plt.figure()
         plt.plot(bot_ideal, label='Ideal case (%.2f)' % bot_ideal[-1])
         plt.plot(bot_pred, label='From prediction (%.2f)' % bot_pred[-1])
-        plt.plot(bot_pred_update, label='From prediction (updated) (%.2f)' % bot_pred_update[-1])
+        # plt.plot(bot_pred_update, label='From prediction (updated) (%.2f)' % bot_pred_update[-1])
         plt.plot(ideal / ideal[0] * 100.0, label='Stock value(%s)' % self.ts)
         plt.xlabel("Days")
         plt.ylabel("Percentage growth")
