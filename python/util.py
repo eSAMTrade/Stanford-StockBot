@@ -658,34 +658,44 @@ class LSTM_Model_MS():
     def prepare_test_train(self):
         self.y_size = 0
         if self.sameTickerTestTrain == True: # For each ticker, split data into train and test set. Test and validation are the same
-            self.xtrain = np.array([], ndmin=3)
-            self.ytrain = np.array([], ndmin=3)
-            self.xtest = np.array([], ndmin=3)
-            self.ytest = np.array([], ndmin=3)
+            self.xtrain = []
+            self.ytrain = []
+            self.xtest = []
+            self.ytest = []
             for y in self.y_all:
                 training_size = int(y.size * self.train_test_split)
                 training_mean = y[:training_size].mean()  # get the average
                 training_std = y[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
                 y = (y - training_mean) / training_std  # prep data, use mean and standard deviation to maintain distribution and ratios
                 data, target = self.data_preprocess(y, 0, training_size, self.past_history, forward_look = self.forward_look)
-                self.xtrain = np.concatenate([self.xtrain, data])
-                self.ytrain = np.concatenate([self.ytrain, target])
+                self.xtrain.append(data)
+                self.ytrain.append(target)
                 data, target = self.data_preprocess(y, training_size, None, self.past_history, forward_look = self.forward_look)
-                self.xtest = np.concatenate([self.xtest, data])
-                self.ytest = np.concatenate([self.ytest, target])
+                self.xtest.append(data)
+                self.ytest.append(target)
                 self.y_size += y.size
+
+            self.xtrain = np.concatenate(self.xtrain)
+            self.ytrain = np.concatenate(self.ytrain)
+            self.xtest = np.concatenate(self.xtest)
+            self.ytest = np.concatenate(self.ytest)
+            self.xt = self.xtest.copy()
+            self.yt = self.ytest.copy()
         else: # For each ticker, data into train set only. Split test ticker data into validation and test sets
-            self.xtrain = np.array([], ndmin=3)
-            self.ytrain = np.array([], ndmin=3)
+            self.xtrain = []
+            self.ytrain = []
             for y in self.y_all:
                 training_size = int(y.size)
                 training_mean = y[:training_size].mean()  # get the average
                 training_std = y[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
                 y = (y - training_mean) / training_std  # prep data, use mean and standard deviation to maintain distribution and ratios
                 data, target = self.data_preprocess(y, 0, training_size, self.past_history, forward_look=self.forward_look)
-                self.xtrain = np.concatenate([self.xtrain, data])
-                self.ytrain = np.concatenate([self.ytrain, target])
+                self.xtrain.append(data)
+                self.ytrain.append(target)
                 self.y_size += y.size
+
+            self.xtrain = np.concatenate(self.xtrain)
+            self.ytrain = np.concatenate(self.ytrain)
 
             y = self.ytestSet
             validation_size = int(y.size * self.train_test_split)
@@ -698,7 +708,6 @@ class LSTM_Model_MS():
             data, target = self.data_preprocess(y, validation_size, None, self.past_history, forward_look=self.forward_look)
             self.xt = data
             self.yt = target
-
 
 
     def create_p_test_train(self):
