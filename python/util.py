@@ -412,25 +412,32 @@ class LSTM_ED_Model():
 
         # Predict encoder for x_test to get decoder inputs. Iteratively predict decoder output.
         # This one is incomplete.
-        # states_value = encoder_model.predict(xtest)
-        # decoder_input = xtest[:, -1, :]  # choosing the most recent value to feed the decoder
-        # for i in range(self.values):
-        #     new_pred, h, c = self.decoder_model.predict([decoder_input] + states_value)
-        #     y_pred = new_pred.reshape((-1, 1))
-        #     decoder_input = new_pred
-        #     states_value = [h, c]
-        #     self.pred_update.append(y_pred)
-
-        # Predict encoder for x_test to get decoder inputs and use it for the decoder for one extra day.
+        states_value = self.encoder_model.predict(xtest[0:1,:,:])
+        decoder_input = xtest[0:1, -1, :]  # choosing the most recent value to feed the decoder
         for i in range(self.values):
-            states_value = self.encoder_model.predict(xtest[i:i+1, :, :])
-            decoder_input = xtest[i:i+1, -1, :]  # choosing the most recent value to feed the decoder
             new_pred, h, c = self.decoder_model.predict([decoder_input] + states_value)
             y_pred = new_pred.reshape((-1, 1))
+            decoder_input = new_pred
             states_value = [h, c]
-            self.pred.append(y_pred)
+            self.pred_update.append(y_pred)
 
-        self.pred = np.array(self.pred)
+        # Predict encoder for x_test to get decoder inputs and use it for the decoder for one extra day.
+        states_value = self.encoder_model.predict(xtest)
+        decoder_input = xtest[:, -1, :]  # choosing the most recent value to feed the decoder
+        new_pred, h, c = self.decoder_model.predict([decoder_input] + states_value)
+        y_pred = new_pred[:self.values,0:1,0:1]
+        self.pred = y_pred
+
+
+        # for i in range(self.values):
+        #     states_value = self.encoder_model.predict(xtest[i:i+1, :, :])
+        #     decoder_input = xtest[i:i+1, -1, :]  # choosing the most recent value to feed the decoder
+        #     new_pred, h, c = self.decoder_model.predict([decoder_input] + states_value)
+        #     y_pred = new_pred.reshape((-1, 1))
+        #     states_value = [h, c]
+        #     self.pred.append(y_pred)
+        # self.pred = np.array(self.pred)
+
         if self.forward_look>1:
             self.RMS_error = (np.mean(((np.squeeze(self.ytest[:self.values, 0, 0]) - np.squeeze(self.pred[:, 0, 0])) / (np.squeeze(self.ytest[:self.values, 0, 0])) ** 2))) ** 0.5
         else:
@@ -454,7 +461,7 @@ class LSTM_ED_Model():
         else:
             plt.plot(self.ytest[:self.values, 0, 0], '-', label='actual (%s)' % self.ts)
             plt.plot(self.pred[:, 0, 0], '-', label='predicted (%s)' % self.ts)
-            # plt.plot(self.pred_update[1:, 0], label='predicted (update)')
+            plt.plot(self.pred_update[:, 0, 0], label='predicted (update)')
             plt.xlabel("Days")
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
