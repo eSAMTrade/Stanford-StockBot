@@ -64,7 +64,7 @@ def buy_and_sell_bot(val,controls):
 class LSTM_Model():
     def __init__(self,tickerSymbol, start, end,
                  past_history = 60, forward_look = 1, train_test_split = 0.8, batch_size = 30,
-                 epochs = 50, steps_per_epoch = 200, validation_steps = 50, verbose = 0,
+                 epochs = 50, steps_per_epoch = 200, validation_steps = 50, verbose = 0, infer_train = True,
                  depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True):
         self.tickerSymbol = tickerSymbol
         self.start = start
@@ -82,6 +82,7 @@ class LSTM_Model():
         self.naive = naive
         self.plot_values = plot_values
         self.plot_bot = plot_bot
+        self.infer_train = infer_train
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
         self.data = []
@@ -166,18 +167,47 @@ class LSTM_Model():
         self.pred = []
         self.pred_update = []
         self.usetest = xtest.copy()
+        if self.infer_train:
+            self.pred_train = []
+            self.pred_update_train = []
+            self.usetest_train = self.xtrain.copy()
         for i in range(self.values):
             self.y_pred = self.model.predict(xtest[i,:,:].reshape(1,xtest.shape[1],xtest.shape[2]))[0][:]
             self.y_pred_update = self.model.predict(self.usetest[i,:,:].reshape(1,xtest.shape[1],xtest.shape[2]))[0][:]
             self.pred.append(self.y_pred)
             self.pred_update.append(self.y_pred_update)
             self.usetest[np.linspace(i+1,i+self.past_history-1,self.past_history-1,dtype=int),np.linspace(self.past_history-2,0,self.past_history-1,dtype=int),:] =  self.y_pred_update[0]
+            if self.infer_train:
+                self.y_pred_train = self.model.predict(self.xtrain[i, :, :].reshape(1, self.xtrain.shape[1], self.xtrain.shape[2]))[0][:]
+                self.y_pred_update_train = \
+                self.model.predict(self.usetest_train[i, :, :].reshape(1, self.xtrain.shape[1], self.xtrain.shape[2]))[0][:]
+                self.pred_train.append(self.y_pred_train)
+                self.pred_update_train.append(self.y_pred_update_train)
+                self.usetest_train[np.linspace(i + 1, i + self.past_history - 1, self.past_history - 1, dtype=int),
+                np.linspace(self.past_history - 2, 0, self.past_history - 1, dtype=int), :] = self.y_pred_update_train[0]
         self.pred = np.array(self.pred)
         self.pred_update = np.array(self.pred_update)
+        if self.infer_train:
+            self.pred = np.array(self.pred)
+            self.pred_update = np.array(self.pred_update)
         if self.forward_look>1:
             self.RMS_error = (np.mean(((self.ytest[:self.values - 1, 0, 0] - self.pred[1:, 0]) / (self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+            self.RMS_error_update = (np.mean(((self.ytest[:self.values - 1, 0, 0] - self.pred_update[1:, 0]) / (
+            self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+            if self.infer_train:
+                self.RMS_error_train = (np.mean(((self.ytrain[:self.values - 1, 0, 0] - self.pred_train[1:, 0]) / (
+                self.ytrain[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+                self.RMS_error_update_train = (np.mean(((self.ytrain[:self.values - 1, 0, 0] - self.pred_update_train[1:, 0]) / (
+                    self.ytrain[:self.values - 1, 0, 0])) ** 2)) ** 0.5
         else:
             self.RMS_error = (np.mean(((self.ytest[:self.values-1]-self.pred[1:])/(self.ytest[:self.values-1]))**2))**0.5
+            self.RMS_error_update = (np.mean(
+                ((self.ytest[:self.values - 1] - self.pred_update[1:]) / (self.ytest[:self.values - 1])) ** 2)) ** 0.5
+            if self.infer_train:
+                self.RMS_error_train = (np.mean(((self.ytrain[:self.values - 1] - self.pred_train[1:]) / (
+                self.ytrain[:self.values - 1])) ** 2)) ** 0.5
+                self.RMS_error_update_train = (np.mean(((self.ytrain[:self.values - 1] - self.pred_update_train[1:]) / (
+                    self.ytrain[:self.values - 1])) ** 2)) ** 0.5
 
     def plot_test_values(self):
         plt.figure()
@@ -191,8 +221,12 @@ class LSTM_Model():
             plt.legend()
             plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
-            #plt.figure()
-            #plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
+            plt.figure()
+            plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
+            plt.xlabel("Days")
+            plt.ylabel("Prediction difference")
+            plt.savefig('../images/Difference_%d_%d_%d_%d_%s.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
         else:
             plt.plot(self.yt[:self.values-1],label='actual (%s)'%self.ts)
             plt.plot(self.pred[1:],label='predicted (%s)'%self.ts)
@@ -201,10 +235,19 @@ class LSTM_Model():
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s.png'%(self.depth,int(self.naive), self.past_history, self.forward_look, self.ts))
-            #plt.figure()
-            #plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
-        print('The relative RMS error is %f'%self.RMS_error)
+            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s.png'%(
+            self.depth,int(self.naive), self.past_history, self.forward_look, self.ts))
+            plt.figure()
+            plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
+            plt.xlabel("Days")
+            plt.ylabel("Prediction difference")
+            plt.savefig('../images/Difference_%d_%d_%d_%d_%s.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+        print('The relative test RMS error is %f'%self.RMS_error)
+        print('The relative test RMS error for the updated dataser is %f' % self.RMS_error_update)
+        if self.infer_train:
+            print('The relative train RMS error is %f' % self.RMS_error_train)
+            print('The relative train RMS error for the updated dataser is %f' % self.RMS_error_update_train)
 
     def full_workflow(self, model = None):
         self.get_ticker_values()
