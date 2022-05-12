@@ -835,6 +835,8 @@ class LSTM_Model_MS():
             self.xt = model.xtest
             self.yt = model.ytest
             self.ts = model.tickerSymbol
+        if self.sameTickerTestTrain == True:
+            self.ts = 'Ensemble'
 
         self.infer_values(self.xt, self.yt, self.ts)
 
