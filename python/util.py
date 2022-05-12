@@ -452,8 +452,8 @@ class LSTM_ED_Model():
             # plt.figure()
             # plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
         else:
-            plt.plot(self.ytest[:self.values, 0, 0], '*-', label='actual (%s)' % self.ts)
-            plt.plot(self.pred[:, 0, 0], 'o-', label='predicted (%s)' % self.ts)
+            plt.plot(self.ytest[:self.values, 0, 0], '-', label='actual (%s)' % self.ts)
+            plt.plot(self.pred[:, 0, 0], '-', label='predicted (%s)' % self.ts)
             # plt.plot(self.pred_update[1:, 0], label='predicted (update)')
             plt.xlabel("Days")
             plt.ylabel("Normalized stock price")
