@@ -463,6 +463,7 @@ class LSTM_ED_Model():
             decoder_input = new_pred
             states_value = [h, c]
             self.pred_update.append(y_pred)
+        self.pred_update = np.array(self.pred_update)
 
         # Predict encoder for x_test to get decoder inputs and use it for the decoder for one extra day.
         states_value = self.encoder_model.predict(xtest)
