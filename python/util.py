@@ -244,10 +244,10 @@ class LSTM_Model():
             plt.savefig('../images/Difference_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
         print('The relative test RMS error is %f'%self.RMS_error)
-        print('The relative test RMS error for the updated dataser is %f' % self.RMS_error_update)
+        print('The relative test RMS error for the updated dataset is %f' % self.RMS_error_update)
         if self.infer_train:
             print('The relative train RMS error is %f' % self.RMS_error_train)
-            print('The relative train RMS error for the updated dataser is %f' % self.RMS_error_update_train)
+            print('The relative train RMS error for the updated dataset is %f' % self.RMS_error_update_train)
             
     def arch_plot(self):
     	dot_img_file = '../images/LSTM_arch_depth%d_naive%d.png' %( self.depth, int(self.naive))
@@ -573,11 +573,11 @@ class LSTM_ED_Model():
         self.depth, int(self.naive), self.past_history, self.forward_look))
 
 
-class LSTM_Model_copy():
+class LSTM_Model_MS():
     def __init__(self,tickerSymbol, start, end,
                  past_history = 60, forward_look = 1, train_test_split = 0.8, batch_size = 30,
                  epochs = 50, steps_per_epoch = 200, validation_steps = 50, verbose = 0, infer_train = True,
-                 depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True, tickerSymbolList = None):
+                 depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True, tickerSymbolList = None, sameTickerTestTrain = True):
         self.tickerSymbol = tickerSymbol
         self.start = start
         self.end = end
@@ -595,14 +595,15 @@ class LSTM_Model_copy():
         self.plot_values = plot_values
         self.plot_bot = plot_bot
         self.infer_train = infer_train
+        self.sameTickerTestTrain = sameTickerTestTrain
         if tickerSymbolList == None:
             self.tickerSymbolList = [tickerSymbol]
         else:
             self.tickerSymbolList = tickerSymbolList
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
-        self.data = []
-        self.target = []
+        data = []
+        target = []
         iStart += sHistory
         if iEnd is None:
             iEnd = len(dataset) - forward_look + 1
@@ -615,13 +616,14 @@ class LSTM_Model_copy():
             reshape_entity = np.asarray([])
             reshape_entity = np.append(reshape_entity, dataset[
                 indices])  # Comment this out if there are multiple identifiers in the feature vector
-            self.data.append(np.reshape(reshape_entity, (sHistory, 1)))  #
+            data.append(np.reshape(reshape_entity, (sHistory, 1)))  #
             if forward_look > 1:
-                self.target.append(np.reshape(fwd_entity, (forward_look, 1)))
+                target.append(np.reshape(fwd_entity, (forward_look, 1)))
             else:
-                self.target.append(dataset[i])
-        self.data = np.array(self.data)
-        self.target = np.array(self.target)
+                target.append(dataset[i])
+        data = np.array(data)
+        target = np.array(target)
+        return data, target
 
     def plot_history_values(self):
         tickerData = yf.Ticker(self.tickerSymbol)
@@ -638,25 +640,70 @@ class LSTM_Model_copy():
     def get_ticker_values(self):
         self.y_all = []
         for tickerSymbol in self.tickerSymbolList:
+            tickerData = yf.Ticker(tickerSymbol)
+            tickerDf = yf.download(tickerSymbol, start=self.start, end=self.end)
+            tickerDf = tickerDf['Adj Close']
+            data = tickerDf
+            self.y_all.append(data.values)
+            self.maxTestValues = len(data.values) - int(len(data.values) * self.train_test_split)
+        if self.sameTickerTestTrain == False: # This indicates self.tickerSymbol is the test ticker and self.tickerSymbolList is the training set
             tickerData = yf.Ticker(self.tickerSymbol)
             tickerDf = yf.download(self.tickerSymbol, start=self.start, end=self.end)
             tickerDf = tickerDf['Adj Close']
             data = tickerDf
-            self.y_all.append(data.values)
+            self.ytestSet = data.values
+            self.maxTestValues = len(data.values) - int(len(data.values) * self.train_test_split)
+
 
     def prepare_test_train(self):
-        training_size = int(self.y.size * self.train_test_split)
-        training_mean = self.y[:training_size].mean()  # get the average
-        training_std = self.y[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
-        self.y = (self.y - training_mean) / training_std  # prep data, use mean and standard deviation to maintain distribution and ratios
-        self.data_preprocess(self.y, 0, training_size, self.past_history, forward_look = self.forward_look)
-        self.xtrain, self.ytrain = self.data, self.target
-        self.data_preprocess(self.y, training_size, None, self.past_history, forward_look = self.forward_look)
-        self.xtest, self.ytest = self.data, self.target
+        self.y_size = 0
+        if self.sameTickerTestTrain == True: # For each ticker, split data into train and test set. Test and validation are the same
+            self.xtrain = np.array([], ndmin=3)
+            self.ytrain = np.array([], ndmin=3)
+            self.xtest = np.array([], ndmin=3)
+            self.ytest = np.array([], ndmin=3)
+            for y in self.y_all:
+                training_size = int(y.size * self.train_test_split)
+                training_mean = y[:training_size].mean()  # get the average
+                training_std = y[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
+                y = (y - training_mean) / training_std  # prep data, use mean and standard deviation to maintain distribution and ratios
+                data, target = self.data_preprocess(y, 0, training_size, self.past_history, forward_look = self.forward_look)
+                self.xtrain = np.concatenate([self.xtrain, data])
+                self.ytrain = np.concatenate([self.ytrain, target])
+                data, target = self.data_preprocess(y, training_size, None, self.past_history, forward_look = self.forward_look)
+                self.xtest = np.concatenate([self.xtest, data])
+                self.ytest = np.concatenate([self.ytest, target])
+                self.y_size += y.size
+        else: # For each ticker, data into train set only. Split test ticker data into validation and test sets
+            self.xtrain = np.array([], ndmin=3)
+            self.ytrain = np.array([], ndmin=3)
+            for y in self.y_all:
+                training_size = int(y.size)
+                training_mean = y[:training_size].mean()  # get the average
+                training_std = y[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
+                y = (y - training_mean) / training_std  # prep data, use mean and standard deviation to maintain distribution and ratios
+                data, target = self.data_preprocess(y, 0, training_size, self.past_history, forward_look=self.forward_look)
+                self.xtrain = np.concatenate([self.xtrain, data])
+                self.ytrain = np.concatenate([self.ytrain, target])
+                self.y_size += y.size
+
+            y = self.ytestSet
+            validation_size = int(y.size * self.train_test_split)
+            validation_mean = y[:validation_size].mean()  # get the average
+            validation_std = y[:validation_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
+            y = (y - validation_mean) / validation_std
+            data, target = self.data_preprocess(y, 0, validation_size, self.past_history, forward_look=self.forward_look)
+            self.xtest = data
+            self.ytest = target
+            data, target = self.data_preprocess(y, validation_size, None, self.past_history, forward_look=self.forward_look)
+            self.xt = data
+            self.yt = target
+
+
 
     def create_p_test_train(self):
         BATCH_SIZE = self.batch_size
-        BUFFER_SIZE = self.y.size
+        BUFFER_SIZE = self.y_size
         p_train = tf.data.Dataset.from_tensor_slices((self.xtrain, self.ytrain))
         self.p_train = p_train.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE, drop_remainder=True).repeat()
         p_test = tf.data.Dataset.from_tensor_slices((self.xtest, self.ytest))
@@ -737,13 +784,13 @@ class LSTM_Model_copy():
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s.png' % (
+            plt.savefig('../images/MultiStock_prediction_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
             plt.figure()
             plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
             plt.xlabel("Days")
             plt.ylabel("Prediction difference")
-            plt.savefig('../images/Difference_%d_%d_%d_%d_%s.png' % (
+            plt.savefig('../images/MSDifference_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
         else:
             plt.plot(self.yt[:self.values-1],label='actual (%s)'%self.ts)
@@ -753,32 +800,33 @@ class LSTM_Model_copy():
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s.png'%(
+            plt.savefig('../images/MultiStock_prediction_%d_%d_%d_%d_%s.png'%(
             self.depth,int(self.naive), self.past_history, self.forward_look, self.ts))
             plt.figure()
             plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
             plt.xlabel("Days")
             plt.ylabel("Prediction difference")
-            plt.savefig('../images/Difference_%d_%d_%d_%d_%s.png' % (
+            plt.savefig('../images/MSDifference_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
         print('The relative test RMS error is %f'%self.RMS_error)
-        print('The relative test RMS error for the updated dataser is %f' % self.RMS_error_update)
+        print('The relative test RMS error for the updated dataset is %f' % self.RMS_error_update)
         if self.infer_train:
             print('The relative train RMS error is %f' % self.RMS_error_train)
-            print('The relative train RMS error for the updated dataser is %f' % self.RMS_error_update_train)
+            print('The relative train RMS error for the updated dataset is %f' % self.RMS_error_update_train)
 
     def full_workflow(self, model = None):
         self.get_ticker_values()
         self.prepare_test_train()
         self.model_LSTM()
         if model is None:
-            self.xt = self.xtest
-            self.yt = self.ytest
+            # self.xt = self.xtest
+            # self.yt = self.ytest
             self.ts = self.tickerSymbol
         else:
             self.xt = model.xtest
             self.yt = model.ytest
             self.ts = model.tickerSymbol
+
         self.infer_values(self.xt, self.yt, self.ts)
 
     def full_workflow_and_plot(self, model = None):
@@ -808,5 +856,5 @@ class LSTM_Model_copy():
         plt.xlabel("Days")
         plt.ylabel("Percentage growth")
         plt.legend()
-        plt.savefig('../images/Bot_prediction_%d_%d_%d_%d_%s.png' % (self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+        plt.savefig('../images/MSBot_prediction_%d_%d_%d_%d_%s.png' % (self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
 
