@@ -521,7 +521,11 @@ class LSTM_ED_Model():
                 self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
 
         print('The relative RMS error is %f' % self.RMS_error)
-        
+
+    def arch_plot(self):
+    	dot_img_file = '../images/LSTM_ED_arch_depth%d_naive%d.png' %( self.depth, int(self.naive))
+    	tf.keras.utils.plot_model(self.model, to_file=dot_img_file, show_shapes=True)
+    	        
     def full_workflow(self, model=None):
         self.get_ticker_values()
         self.prepare_test_train()
@@ -536,6 +540,7 @@ class LSTM_ED_Model():
             self.yt = model.ytest
             self.ts = model.tickerSymbol
         self.infer_values(self.xt, self.yt, self.ts)
+        self.arch_plot()
 
     def full_workflow_and_plot(self, model=None):
         self.full_workflow(model=model)
