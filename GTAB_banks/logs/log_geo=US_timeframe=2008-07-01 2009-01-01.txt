@@ -1,0 +1,76 @@
+
+2022-05-07 17:43:29.748274
+Start AnchorBank init for region US in timeframe 2008-07-01 2009-01-01...
+Loading previously checked keywords from /content/drive/MyDrive/CS230/GTAB_banks/data/internal/google_keywords/intermediate_google_keywords_geo=US_timeframe=2008-07-01 2009-01-01.pkl.
+520/568 keyword candidates found in cache, 48 still to check.
+Sampling keywords...
+
+Bad keyword '/m/05n7n62', because The request failed: Google returned a response with code 400.
+
+Bad keyword '/m/05n6lws', because The request failed: Google returned a response with code 400.
+
+Bad keyword '/m/07b2rg', because The request failed: Google returned a response with code 400.
+
+Bad keyword '/m/0bq4bp', because The request failed: Google returned a response with code 400.
+
+Bad keyword '/m/04f182w', because The request failed: Google returned a response with code 400.
+
+Bad keyword '/m/05n2v4t', because The request failed: Google returned a response with code 400.
+
+Bad keyword '/m/05v67qk', because The request failed: Google returned a response with code 400.
+
+Bad keyword '/m/0c0ff8', because The request failed: Google returned a response with code 400.
+
+Bad keyword '/m/0c_lmc1', because The request failed: Google returned a response with code 400.
+
+Bad keyword '/m/05n35c8', because The request failed: Google returned a response with code 400.
+
+2022-05-07 17:56:13.441792
+Start AnchorBank init for region US in timeframe 2008-07-01 2009-01-01...
+Loading previously checked keywords from /content/drive/MyDrive/CS230/GTAB_banks/data/internal/google_keywords/intermediate_google_keywords_geo=US_timeframe=2008-07-01 2009-01-01.pkl.
+567/568 keyword candidates found in cache, 1 still to check.
+Sampling keywords...
+
+2022-05-07 20:50:19.440759
+Start AnchorBank init for region US in timeframe 2008-07-01 2009-01-01...
+Loading previously checked keywords from /content/drive/MyDrive/CS230/GTAB_banks/data/internal/google_keywords/intermediate_google_keywords_geo=US_timeframe=2008-07-01 2009-01-01.pkl.
+567/568 keyword candidates found in cache, 1 still to check.
+Sampling keywords...
+Querying google...
+Removing bad queries...
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']

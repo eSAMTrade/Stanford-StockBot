@@ -1,0 +1,114 @@
+
+2022-05-07 15:53:55.748673
+Start AnchorBank init for region US in timeframe 2005-07-01 2006-01-01...
+Querying google...
+Loading intermediate query results from /content/drive/MyDrive/Courses/2021-22 Spring/CS230/CS230/GTAB_banks/data/internal/google_results/intermediate_google_results_geo=US_timeframe=2005-07-01 2006-01-01.pkl.
+Removing bad queries...
+Non-continuous groups at: 
+['/m/09v3zmt', '/m/045c7b', 'Google', '/m/02y1vz', 'Amazon']
+['Google', '/m/02y1vz', 'Amazon', '/m/017rf_', '/m/03vgrr']
+Non-continuous groups at: 
+['/m/09v3zmt', '/m/045c7b', 'Google', '/m/02y1vz', 'Amazon']
+['Google', '/m/02y1vz', 'Amazon', '/m/017rf_', '/m/03vgrr']
+Non-continuous groups at: 
+['/m/09v3zmt', '/m/045c7b', 'Google', '/m/02y1vz', 'Amazon']
+['Google', '/m/02y1vz', 'Amazon', '/m/017rf_', '/m/03vgrr']
+Non-continuous groups at: 
+['/m/09v3zmt', '/m/045c7b', 'Google', '/m/02y1vz', 'Amazon']
+['Google', '/m/02y1vz', 'Amazon', '/m/017rf_', '/m/03vgrr']
+Non-continuous groups at: 
+['/m/017rf_', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['/m/019rl6', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+Non-continuous groups at: 
+['/m/017rf_', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['/m/019rl6', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+Non-continuous groups at: 
+['/m/017rf_', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['/m/019rl6', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+Non-continuous groups at: 
+['/m/017rf_', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['/m/019rl6', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+Non-continuous groups at: 
+['/m/017dqv', '/m/0d_94', '/m/09lnn', '/m/015_77', '/m/0ctfk']
+['/m/09lnn', '/m/015_77', '/m/0ctfk', '/m/0cl2v', '/m/0f4s2w']
+Non-continuous groups at: 
+['/m/017dqv', '/m/0d_94', '/m/09lnn', '/m/015_77', '/m/0ctfk']
+['/m/09lnn', '/m/015_77', '/m/0ctfk', '/m/0cl2v', '/m/0f4s2w']
+Non-continuous groups at: 
+['/m/017dqv', '/m/0d_94', '/m/09lnn', '/m/015_77', '/m/0ctfk']
+['/m/09lnn', '/m/015_77', '/m/0ctfk', '/m/0cl2v', '/m/0f4s2w']
+Non-continuous groups at: 
+['/m/017dqv', '/m/0d_94', '/m/09lnn', '/m/015_77', '/m/0ctfk']
+['/m/09lnn', '/m/015_77', '/m/0ctfk', '/m/0cl2v', '/m/0f4s2w']
+Non-continuous groups at: 
+['/m/0cl2v', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+['/m/0dm32', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+Non-continuous groups at: 
+['/m/0cl2v', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+['/m/0dm32', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+Non-continuous groups at: 
+['/m/0cl2v', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+['/m/0dm32', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+Non-continuous groups at: 
+['/m/0cl2v', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+['/m/0dm32', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+Non-continuous groups at: 
+['/m/09v3zmt', '/m/045c7b', 'Google', '/m/02y1vz', 'Amazon']
+['Google', '/m/02y1vz', 'Amazon', '/m/017rf_', '/m/05g0_z']
+Non-continuous groups at: 
+['/m/09v3zmt', '/m/045c7b', 'Google', '/m/02y1vz', 'Amazon']
+['Google', '/m/02y1vz', 'Amazon', '/m/017rf_', '/m/05g0_z']
+Non-continuous groups at: 
+['/m/09v3zmt', '/m/045c7b', 'Google', '/m/02y1vz', 'Amazon']
+['Google', '/m/02y1vz', 'Amazon', '/m/017rf_', '/m/05g0_z']
+Non-continuous groups at: 
+['/m/09v3zmt', '/m/045c7b', 'Google', '/m/02y1vz', 'Amazon']
+['Google', '/m/02y1vz', 'Amazon', '/m/017rf_', '/m/05g0_z']
+Non-continuous groups at: 
+['/m/017rf_', '/m/05g0_z', '/m/09cpv', '/m/09cgp', '/m/01yt8c']
+['/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp', '/m/01yt8c']
+Non-continuous groups at: 
+['/m/017rf_', '/m/05g0_z', '/m/09cpv', '/m/09cgp', '/m/01yt8c']
+['/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp', '/m/01yt8c']
+Non-continuous groups at: 
+['/m/017rf_', '/m/05g0_z', '/m/09cpv', '/m/09cgp', '/m/01yt8c']
+['/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp', '/m/01yt8c']
+Non-continuous groups at: 
+['/m/017rf_', '/m/05g0_z', '/m/09cpv', '/m/09cgp', '/m/01yt8c']
+['/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp', '/m/01yt8c']
+Non-continuous groups at: 
+['/m/017dqv', '/m/0d_94', '/m/09lnn', '/m/015_77', '/m/0ctfk']
+['/m/09lnn', '/m/015_77', '/m/0ctfk', '/m/0cl2v', '/m/0f4s2w']
+Non-continuous groups at: 
+['/m/017dqv', '/m/0d_94', '/m/09lnn', '/m/015_77', '/m/0ctfk']
+['/m/09lnn', '/m/015_77', '/m/0ctfk', '/m/0cl2v', '/m/0f4s2w']
+Non-continuous groups at: 
+['/m/017dqv', '/m/0d_94', '/m/09lnn', '/m/015_77', '/m/0ctfk']
+['/m/09lnn', '/m/015_77', '/m/0ctfk', '/m/0cl2v', '/m/0f4s2w']
+Non-continuous groups at: 
+['/m/017dqv', '/m/0d_94', '/m/09lnn', '/m/015_77', '/m/0ctfk']
+['/m/09lnn', '/m/015_77', '/m/0ctfk', '/m/0cl2v', '/m/0f4s2w']
+Non-continuous groups at: 
+['/m/0cl2v', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+['/m/0dm32', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+Non-continuous groups at: 
+['/m/0cl2v', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+['/m/0dm32', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+Non-continuous groups at: 
+['/m/0cl2v', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+['/m/0dm32', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+Non-continuous groups at: 
+['/m/0cl2v', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+['/m/0dm32', '/m/0f4s2w', '/m/0cyhj_', '/m/0frq6', '/m/0388q']
+Diagnostics done!
+A total of 42 bad keywords removed.
+Saving google results as '/content/drive/MyDrive/Courses/2021-22 Spring/CS230/CS230/GTAB_banks/data/internal/google_results/google_results_geo=US_timeframe=2005-07-01 2006-01-01.pkl'...
+Total queries (groups of 5 keywords): 449
+Finding paths...
+Paths done!
+Err: 3.9968028886505635e-15
+Querying pairs...
+Total range: 0.00029662346146999994
+Saving anchorbank as '/content/drive/MyDrive/Courses/2021-22 Spring/CS230/CS230/GTAB_banks/output/google_anchorbanks/google_anchorbank_geo=US_timeframe=2005-07-01 2006-01-01.tsv'...
+AnchorBank init done.
+There was an error. Please check the log file.

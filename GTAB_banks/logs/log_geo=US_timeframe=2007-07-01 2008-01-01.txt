@@ -1,0 +1,90 @@
+
+2022-05-07 22:56:47.756278
+Start AnchorBank init for region US in timeframe 2007-07-01 2008-01-01...
+Querying google...
+Loading intermediate query results from /content/drive/MyDrive/Courses/2021-22 Spring/CS230/CS230/GTAB_banks/data/internal/google_results/intermediate_google_results_geo=US_timeframe=2007-07-01 2008-01-01.pkl.
+Removing bad queries...
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+
+2022-05-08 07:29:09.856009
+Start AnchorBank init for region US in timeframe 2007-07-01 2008-01-01...
+Querying google...
+Loading intermediate query results from /content/drive/MyDrive/CS230/GTAB_banks/data/internal/google_results/intermediate_google_results_geo=US_timeframe=2007-07-01 2008-01-01.pkl.
+Removing bad queries...
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['/m/045c7b', '/m/03vgrr', '/m/05g0_z', '/m/09cpv', '/m/09cgp']
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+Non-continuous groups at: 
+['Google', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+['/m/02y1vz', '/m/0b2334', '/m/03vgrr', '/m/05g0_z', '/m/09cpv']
+
+2022-05-08 07:31:45.136135
+Start AnchorBank init for region US in timeframe 2007-07-01 2008-01-01...
+Querying google...
+Loading intermediate query results from /content/drive/MyDrive/CS230/GTAB_banks/data/internal/google_results/intermediate_google_results_geo=US_timeframe=2007-07-01 2008-01-01.pkl.
+Removing bad queries...
