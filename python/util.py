@@ -13,10 +13,10 @@ def get_categorical_tickers():
     ticker_dict = {}
     all_tickers = []
     ticker_dict['energy'] = ['XOM', 'CVX', 'SHEL', 'PTR', 'TTE', 'BP', 'PBR', 'SNP', 'SLB', 'VLO']
-    ticker_dict['materials'] = ['BHP', 'LIN', 'RIO', 'DOW', 'DD', 'CTA-PB', 'SHW', 'NTR', 'APD']
+    ticker_dict['materials'] = ['BHP', 'LIN', 'RIO', 'DD', 'SHW', 'CTA-PB', 'APD']
     ticker_dict['industrials'] = ['UPS', 'HON', 'LMT', 'BA', 'GE', 'MMM', 'RTX', 'CAT', 'WM', 'ABB', 'ETN', 'EMR',
                                   'FDX', 'TRI']
-    ticker_dict['utilities'] = ['NEE', 'DUK', 'DCUE', 'NGG', 'AEP', 'EXL', 'XEL', 'WEV', 'AWK', 'ETR', 'PCG']
+    ticker_dict['utilities'] = ['NEE', 'DUK', 'NGG', 'AEP', 'XEL','AWK' ,'ETR', 'PCG']
     ticker_dict['healthcare'] = ['UNH', 'JNJ', 'PFE', 'NVO', 'TMO', 'MRK', 'AZN', 'NVS', 'DHR', 'AMGN', 'CVS', 'GSK',
                                  'ZTS', 'GILD']
     ticker_dict['financials'] = ['BRK-A', 'V', 'JPM', 'BAC', 'MA', 'WFC', 'C-PJ', 'MS', 'RY', 'AXP']
@@ -37,8 +37,19 @@ def get_categorical_tickers():
     tickerSymbols = ['BRK-A', 'GOOG', 'MSFT']
     return ticker_dict, tickerSymbols
 
+def cross_corr(a,b):
+    return (a*b).sum()/((a**2).sum()*(b**2).sum())**0.5
+
+def get_tick_values(tickerSymbol, start, end):
+    tickerData = yf.Ticker(tickerSymbol)
+    tickerDf = yf.download(tickerSymbol, start=start, end=end)
+    tickerDf = tickerDf['Adj Close']
+    data = tickerDf
+    return data.values
+
 def get_control_vector(val):
     return np.diff(np.sign(np.diff(val)))
+
 def buy_and_sell_bot(val,controls):
     inv = []
     curr_val = 100
@@ -267,7 +278,7 @@ class LSTM_Model():
             self.yt = model.ytest
             self.ts = model.tickerSymbol
         self.infer_values(self.xt, self.yt, self.ts)
-        self.arch_plot()
+        # self.arch_plot()
 
     def full_workflow_and_plot(self, model = None):
         self.full_workflow(model = model)
@@ -737,7 +748,7 @@ class LSTM_Model_MS():
                   validation_data = self.p_test, validation_steps = self.validation_steps,
                   verbose = self.verbose)
 
-    def infer_values(self, xtest, ytest, ts):
+    def infer_values(self, xtest, ytest, ts = None):
         self.pred = []
         self.pred_update = []
         self.usetest = xtest.copy()
@@ -828,8 +839,6 @@ class LSTM_Model_MS():
         self.prepare_test_train()
         self.model_LSTM()
         if model is None:
-            # self.xt = self.xtest
-            # self.yt = self.ytest
             self.ts = self.tickerSymbol
         else:
             self.xt = model.xtest
@@ -839,6 +848,30 @@ class LSTM_Model_MS():
             self.ts = 'Ensemble'
 
         self.infer_values(self.xt, self.yt, self.ts)
+
+    def model_workflow(self):
+        self.get_ticker_values()
+        self.prepare_test_train()
+        self.model_LSTM()
+
+    def prepare_test(self):
+        training_size = int(self.ytemp.size * self.train_test_split)
+        training_mean = self.ytemp[:training_size].mean()  # get the average
+        training_std = self.ytemp[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
+        self.ytemp = (self.ytemp - training_mean) / training_std  # prep data, use mean and standard deviation to maintain distribution and ratios
+        data, target = self.data_preprocess(self.ytemp, training_size, None, self.past_history, forward_look = self.forward_look)
+        self.xtest, self.ytest = data, target
+
+    def get_tick_values(self):
+        tickerData = yf.Ticker(self.tickerSymbol)
+        tickerDf = yf.download(self.tickerSymbol, start=self.start, end=self.end)
+        tickerDf = tickerDf['Adj Close']
+        data = tickerDf
+        self.ytemp = data.values
+
+    def prepare_workflow(self):
+        self.get_tick_values()
+        self.prepare_test()
 
     def full_workflow_and_plot(self, model = None):
         self.full_workflow(model = model)
