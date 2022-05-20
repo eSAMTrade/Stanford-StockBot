@@ -11,7 +11,7 @@ ticker_dict, tickerSymbols = get_categorical_tickers()
 start="2010-01-01"
 end="2019-12-31"
 industries = ['energy','materials','utilities','financials','estate']
-tickers = ['SHEL','RIO','NEE','BRK-A','JPM']
+tickers = ['SHEL','RIO','NEE','BRK-A','CCI']
 samples = len(tickers)
 data_values = []
 for ticks in tickers:
@@ -50,10 +50,14 @@ sns.heatmap(cc_matrix, vmin=cc_matrix.reshape(-1,).min(), vmax=cc_matrix.reshape
     cmap=sns.diverging_palette(20, 220, n=200),square=True)
 plt.xticks(np.arange(0.75,samples+0.75,1),labels = tickers,rotation=45,horizontalalignment='right')
 plt.yticks(np.arange(0.25,samples+0.25,1),labels = tickers,rotation=45,horizontalalignment='right')
+plt.title('Cross-correlation')
+plt.savefig('../images/Cross_correlation.png')
 plt.figure(2)
 sns.heatmap(rmse_matrix, vmin=rmse_matrix.reshape(-1,).min(), vmax=rmse_matrix.reshape(-1,).max(),
     center=(rmse_matrix.reshape(-1,).max()+rmse_matrix.reshape(-1,).min())/2,
     cmap=sns.diverging_palette(20, 220, n=200),square=True)
-plt.xticks(np.arange(0.75,samples+0.75,1),labels = tickers,rotation=45,horizontalalignment='right')
+plt.xticks(np.arange(0.75,samples+0.75,1),labels = industries,rotation=45,horizontalalignment='right')
 plt.yticks(np.arange(0.25,samples+0.25,1),labels = tickers,rotation=45,horizontalalignment='right')
+plt.title('RMS Error')
+plt.savefig('../images/Cross_correlation_RMS.png')
 plt.show()
