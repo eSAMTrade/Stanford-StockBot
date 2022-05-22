@@ -168,9 +168,9 @@ class LSTM_Model():
         self.model.add(tf.keras.layers.Dense(self.forward_look))
 
         self.model.compile(optimizer='Adam',
-                      loss='mse')
+                      loss='mse', metrics=['mse'])
         self.create_p_test_train()
-        self.model.fit(self.p_train, epochs = self.epochs, steps_per_epoch = self.steps_per_epoch,
+        self.hist = self.model.fit(self.p_train, epochs = self.epochs, steps_per_epoch = self.steps_per_epoch,
                   validation_data = self.p_test, validation_steps = self.validation_steps,
                   verbose = self.verbose)
 
@@ -198,27 +198,23 @@ class LSTM_Model():
                 np.linspace(self.past_history - 2, 0, self.past_history - 1, dtype=int), :] = self.y_pred_update_train[0]
         self.pred = np.array(self.pred)
         self.pred_update = np.array(self.pred_update)
+        self.RMS_error = self.hist.history['val_mse'][-1]
+        self.RMS_error_train = self.hist.history['mse'][-1]
         if self.infer_train:
             self.pred = np.array(self.pred)
             self.pred_update = np.array(self.pred_update)
         if self.forward_look>1:
-            self.RMS_error = (np.mean(((self.ytest[:self.values - 1, 0, 0] - self.pred[1:, 0]) / (self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5
             self.RMS_error_update = (np.mean(((self.ytest[:self.values - 1, 0, 0] - self.pred_update[1:, 0]) / (
-            self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+            self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5/self.batch_size
             if self.infer_train:
-                self.RMS_error_train = (np.mean(((self.ytrain[:self.values - 1, 0, 0] - self.pred_train[1:, 0]) / (
-                self.ytrain[:self.values - 1, 0, 0])) ** 2)) ** 0.5
                 self.RMS_error_update_train = (np.mean(((self.ytrain[:self.values - 1, 0, 0] - self.pred_update_train[1:, 0]) / (
-                    self.ytrain[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+                    self.ytrain[:self.values - 1, 0, 0])) ** 2)) ** 0.5/self.batch_size
         else:
-            self.RMS_error = (np.mean(((self.ytest[:self.values-1]-self.pred[1:])/(self.ytest[:self.values-1]))**2))**0.5
             self.RMS_error_update = (np.mean(
-                ((self.ytest[:self.values - 1] - self.pred_update[1:]) / (self.ytest[:self.values - 1])) ** 2)) ** 0.5
+                ((self.ytest[:self.values - 1] - self.pred_update[1:]) / (self.ytest[:self.values - 1])) ** 2)) ** 0.5/self.batch_size
             if self.infer_train:
-                self.RMS_error_train = (np.mean(((self.ytrain[:self.values - 1] - self.pred_train[1:]) / (
-                self.ytrain[:self.values - 1])) ** 2)) ** 0.5
                 self.RMS_error_update_train = (np.mean(((self.ytrain[:self.values - 1] - self.pred_update_train[1:]) / (
-                    self.ytrain[:self.values - 1])) ** 2)) ** 0.5
+                    self.ytrain[:self.values - 1])) ** 2)) ** 0.5/self.batch_size
 
     def plot_test_values(self):
         plt.figure()
@@ -433,9 +429,9 @@ class LSTM_ED_Model():
         # self.model.compile(optimizer='Adam',
         #               loss='mean_absolute_percentage_error')
         self.model.compile(optimizer='Adam',
-                           loss='mse')
+                           loss='mse', metrics=['mse'])
         self.create_p_test_train()
-        self.history = self.model.fit(self.p_train,
+        self.history  = self.model.fit(self.p_train,
                                  epochs=self.epochs,
                                  batch_size=self.batch_size,
                                  steps_per_epoch=self.steps_per_epoch,
@@ -501,9 +497,9 @@ class LSTM_ED_Model():
         # self.pred = np.array(self.pred)
 
         if self.forward_look>1:
-            self.RMS_error = (np.mean(((np.squeeze(self.ytest[:self.values, 0, 0]) - np.squeeze(self.pred[:, 0, 0])) / (np.squeeze(self.ytest[:self.values, 0, 0])) ** 2))) ** 0.5
+            self.RMS_error = self.history.history['mse'][-1]
         else:
-            self.RMS_error = (np.mean(((self.ytest[:self.values]-self.pred[:, 0, 0])/(self.ytest[:self.values]))**2))**0.5
+            self.RMS_error = self.history.history['mse'][-1]
 
     def plot_test_values(self):
         plt.figure()
@@ -742,9 +738,9 @@ class LSTM_Model_MS():
         self.model.add(tf.keras.layers.Dense(self.forward_look))
 
         self.model.compile(optimizer='Adam',
-                      loss='mse')
+                      loss='mse', metrics=['mse'])
         self.create_p_test_train()
-        self.model.fit(self.p_train, epochs = self.epochs, steps_per_epoch = self.steps_per_epoch,
+        self.hist = self.model.fit(self.p_train, epochs = self.epochs, steps_per_epoch = self.steps_per_epoch,
                   validation_data = self.p_test, validation_steps = self.validation_steps,
                   verbose = self.verbose)
 
@@ -772,27 +768,25 @@ class LSTM_Model_MS():
                 np.linspace(self.past_history - 2, 0, self.past_history - 1, dtype=int), :] = self.y_pred_update_train[0]
         self.pred = np.array(self.pred)
         self.pred_update = np.array(self.pred_update)
+        self.RMS_error = self.hist.history['val_mse'][-1]
+        self.RMS_error_train = self.hist.history['mse'][-1]
         if self.infer_train:
             self.pred = np.array(self.pred)
             self.pred_update = np.array(self.pred_update)
-        if self.forward_look>1:
-            self.RMS_error = (np.mean(((self.ytest[:self.values - 1, 0, 0] - self.pred[1:, 0]) / (self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+        if self.forward_look > 1:
             self.RMS_error_update = (np.mean(((self.ytest[:self.values - 1, 0, 0] - self.pred_update[1:, 0]) / (
-            self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+                self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5 / self.batch_size
             if self.infer_train:
-                self.RMS_error_train = (np.mean(((self.ytrain[:self.values - 1, 0, 0] - self.pred_train[1:, 0]) / (
-                self.ytrain[:self.values - 1, 0, 0])) ** 2)) ** 0.5
-                self.RMS_error_update_train = (np.mean(((self.ytrain[:self.values - 1, 0, 0] - self.pred_update_train[1:, 0]) / (
-                    self.ytrain[:self.values - 1, 0, 0])) ** 2)) ** 0.5
+                self.RMS_error_update_train = (np.mean(
+                    ((self.ytrain[:self.values - 1, 0, 0] - self.pred_update_train[1:, 0]) / (
+                        self.ytrain[:self.values - 1, 0, 0])) ** 2)) ** 0.5 / self.batch_size
         else:
-            self.RMS_error = (np.mean(((self.ytest[:self.values-1]-self.pred[1:])/(self.ytest[:self.values-1]))**2))**0.5
             self.RMS_error_update = (np.mean(
-                ((self.ytest[:self.values - 1] - self.pred_update[1:]) / (self.ytest[:self.values - 1])) ** 2)) ** 0.5
+                ((self.ytest[:self.values - 1] - self.pred_update[1:]) / (
+                self.ytest[:self.values - 1])) ** 2)) ** 0.5 / self.batch_size
             if self.infer_train:
-                self.RMS_error_train = (np.mean(((self.ytrain[:self.values - 1] - self.pred_train[1:]) / (
-                self.ytrain[:self.values - 1])) ** 2)) ** 0.5
                 self.RMS_error_update_train = (np.mean(((self.ytrain[:self.values - 1] - self.pred_update_train[1:]) / (
-                    self.ytrain[:self.values - 1])) ** 2)) ** 0.5
+                    self.ytrain[:self.values - 1])) ** 2)) ** 0.5 / self.batch_size
 
     def plot_test_values(self):
         plt.figure()
