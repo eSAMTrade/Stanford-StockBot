@@ -46,6 +46,7 @@ LSTM_4 = LSTM_Model_MS(tickerSymbol = tickeranalysis, start = start, end = end, 
                        tickerSymbolList = tickerList, sameTickerTestTrain = False)
 LSTM_4.full_workflow_and_plot()
 LSTM_4.plot_bot_decision()
+plt.clf()
 
 LSTM_5 = LSTM_Model_MS(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0,
                        tickerSymbolList = tickerList, sameTickerTestTrain = False)
