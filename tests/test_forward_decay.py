@@ -1,8 +1,13 @@
 import sys, os
+
+import matplotlib.pyplot as plt
+
 sys.path.append('../python')
 from util import *
 from copy import deepcopy
-
+from scipy.optimize import curve_fit
+def optimize(x,a,b):
+    return 1.0 + a*x/b
 '''
 Other initializers of the class the can be mentioned along with the default values:
 past_history = 60       # number of days in the past you want to look at
@@ -22,39 +27,35 @@ values = 200            # Future days that you want to plot for (computed one da
 ticker_dict, tickerSymbols = get_categorical_tickers()
 start="2010-01-01"
 end="2019-12-31"
-fwd = 5
+fwd = 20
 past = 60
 ##############################################
 tickeranalysis = tickerSymbols[0]
 #LSTM_1 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True)
 #LSTM_1.full_workflow_and_plot()
 
+LSTM_1 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True, forward_look = fwd, past_history = past, custom_loss = True)
+LSTM_1.full_workflow_and_plot()
+LSTM_1.plot_bot_decision()
+plt.clf()
 LSTM_2 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True, forward_look = fwd, past_history = past)
 LSTM_2.full_workflow_and_plot()
+LSTM_3.plot_bot_decision()
+plt.clf()
 
-plt.figure(3)
+############ Plotting the value convergence as we move closer to target prediction day ################
+plt.figure()
 plot_handle =np.zeros(fwd)
 for i in range(LSTM_2.values - fwd - 1):
     plot_vec = LSTM_2.pred[np.linspace(i,fwd+i-1,fwd,dtype=int),np.linspace(fwd-1,0,fwd,dtype=int)]
     plot_handle += (1/(LSTM_2.values - fwd - 1))*plot_vec/plot_vec[-1]
 
-
-plt.plot(plot_handle)
-#plt.plot(LSTM_2.pred[np.linspace(0,fwd-1,fwd,dtype=int),np.linspace(fwd-1,0,fwd,dtype=int)])
-
+popt,_ = curve_fit(optimize,np.linspace(0,len(plot_handle)-1,len(plot_handle),dtype=int),plot_handle[np.linspace(len(plot_handle)-1,0,len(plot_handle),dtype=int)])
+a,b=popt
+plt.plot(plot_handle[np.linspace(len(plot_handle)-1,0,len(plot_handle),dtype=int)]) #
+plt.plot(np.linspace(0,len(plot_handle)-1,len(plot_handle),dtype=int),optimize(np.linspace(0,len(plot_handle)-1,len(plot_handle),dtype=int),a,b),'r--',label=r'$w=1+%.2f x/ %.2f$'%(a,b))
+plt.ylabel('Normalized stock price')
+plt.legend(fontsize=12)
+plt.xlabel('Days away from prediction')
+plt.savefig('../images/Correction_factor.png')
 plt.show()
-'''
-LSTM_3 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = False, forward_look = fwd, past_history = past)
-LSTM_3.full_workflow_and_plot()
-
-plt.figure(5)
-plt.plot(LSTM_3.pred[np.linspace(0,fwd-1,fwd,dtype=int),np.linspace(fwd-1,0,fwd,dtype=int)])
-plt.show()
-
-LSTM_4 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 1, naive = False, forward_look = fwd, past_history = past)
-LSTM_4.full_workflow_and_plot()
-
-plt.figure(7)
-plt.plot(LSTM_4.pred[np.linspace(0,fwd-1,fwd,dtype=int),np.linspace(fwd-1,0,fwd,dtype=int)])
-plt.show()
-'''

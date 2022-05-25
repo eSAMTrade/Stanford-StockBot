@@ -25,40 +25,51 @@ end="2019-12-31"
 tickeranalysis = tickerSymbols[0]
 LSTM_1 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True)
 LSTM_1.full_workflow_and_plot()
+plt.clf()
 LSTM_1.plot_bot_decision()
-
+plt.clf()
 LSTM_2 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0)
 LSTM_2.full_workflow_and_plot()
+plt.clf()
 LSTM_2.plot_bot_decision()
-
+plt.clf()
 LSTM_3 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 1)
 LSTM_3.full_workflow_and_plot()
+plt.clf()
 LSTM_3.plot_bot_decision()
+plt.clf()
 ############################################
 tickeranalysis = tickerSymbols[1]
 LSTM_4 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True)
 LSTM_4.full_workflow_and_plot()
+plt.clf()
 LSTM_4.plot_bot_decision()
-
+plt.clf()
 LSTM_5 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0)
 LSTM_5.full_workflow_and_plot()
+plt.clf()
 LSTM_5.plot_bot_decision()
-
+plt.clf()
 LSTM_6 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 1)
 LSTM_6.full_workflow_and_plot()
+plt.clf()
 LSTM_6.plot_bot_decision()
+plt.clf()
 #####################################
 tickeranalysis = tickerSymbols[2]
 LSTM_7 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True)
 LSTM_7.full_workflow_and_plot()
+plt.clf()
 LSTM_7.plot_bot_decision()
-
+plt.clf()
 LSTM_8 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0)
 LSTM_8.full_workflow_and_plot()
+plt.clf()
 LSTM_8.plot_bot_decision()
-
+plt.clf()
 LSTM_9 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 1)
 LSTM_9.full_workflow_and_plot()
+plt.clf()
 LSTM_9.plot_bot_decision()
-
+plt.clf()
 plt.show()
