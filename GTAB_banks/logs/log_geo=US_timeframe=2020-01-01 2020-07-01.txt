@@ -94,3 +94,53 @@ Querying pairs...
 Total range: 5.19577142662338e-06
 Saving anchorbank as '/content/drive/MyDrive/Courses/2021-22 Spring/CS230/CS230/GTAB_banks/output/google_anchorbanks/google_anchorbank_geo=US_timeframe=2020-01-01 2020-07-01.tsv'...
 AnchorBank init done.
+
+2022-05-23 20:59:27.917577
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2020-01-01 2020-07-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-23 21:02:05.306724
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2020-01-01 2020-07-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 21:47:30.923774
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2020-01-01 2020-07-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 21:55:02.881107
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2020-01-01 2020-07-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 22:08:19.511320
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2020-01-01 2020-07-01.tsv
+New query 'GOOG stock'
+New query calibrated!
+
+2022-05-24 22:15:46.808625
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2020-01-01 2020-07-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 10:13:05.596376
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2020-01-01 2020-07-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:20:08.901314
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2020-01-01 2020-07-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:23:11.625357
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2020-01-01 2020-07-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:25:01.923192
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2020-01-01 2020-07-01.tsv
+New query 'Google stock'
+New query calibrated!

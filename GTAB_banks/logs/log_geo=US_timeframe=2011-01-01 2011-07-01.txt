@@ -94,3 +94,53 @@ Querying pairs...
 Total range: 0.0
 Saving anchorbank as '/content/drive/MyDrive/CS230/GTAB_banks/output/google_anchorbanks/google_anchorbank_geo=US_timeframe=2011-01-01 2011-07-01.tsv'...
 AnchorBank init done.
+
+2022-05-23 20:57:42.606558
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-01-01 2011-07-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-23 21:00:40.184082
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-01-01 2011-07-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 21:45:38.922362
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-01-01 2011-07-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 21:53:33.823392
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-01-01 2011-07-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 22:07:20.883182
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-01-01 2011-07-01.tsv
+New query 'GOOG stock'
+New query calibrated!
+
+2022-05-24 22:14:37.103533
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-01-01 2011-07-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 10:12:00.825697
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-01-01 2011-07-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:19:03.557316
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-01-01 2011-07-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:22:07.743737
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-01-01 2011-07-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:24:01.141821
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-01-01 2011-07-01.tsv
+New query 'Google stock'
+New query calibrated!

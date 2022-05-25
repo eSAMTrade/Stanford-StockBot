@@ -100,3 +100,53 @@ Querying pairs...
 Total range: 8.357803156228888e-06
 Saving anchorbank as '/content/drive/MyDrive/Courses/2021-22 Spring/CS230/CS230/GTAB_banks/output/google_anchorbanks/google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv'...
 AnchorBank init done.
+
+2022-05-23 20:57:48.239394
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-23 21:00:44.764182
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 21:45:45.035494
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 21:53:38.801966
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 22:07:23.813956
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'GOOG stock'
+New query calibrated!
+
+2022-05-24 22:14:40.257338
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 10:12:03.376355
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:19:06.382285
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:22:10.339424
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:24:03.777121
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'Google stock'
+New query calibrated!

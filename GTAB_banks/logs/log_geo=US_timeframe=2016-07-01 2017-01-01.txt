@@ -15,3 +15,53 @@ Querying pairs...
 Total range: 8.208880623724804e-06
 Saving anchorbank as '/content/drive/MyDrive/CS230/GTAB_banks/output/google_anchorbanks/google_anchorbank_geo=US_timeframe=2016-07-01 2017-01-01.tsv'...
 AnchorBank init done.
+
+2022-05-23 20:58:48.456932
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2016-07-01 2017-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-23 21:01:32.848715
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2016-07-01 2017-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 21:46:51.073042
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2016-07-01 2017-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 21:54:28.377002
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2016-07-01 2017-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 22:07:55.510602
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2016-07-01 2017-01-01.tsv
+New query 'GOOG stock'
+New query calibrated!
+
+2022-05-24 22:15:18.555641
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2016-07-01 2017-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 10:12:39.190429
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2016-07-01 2017-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:19:43.265274
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2016-07-01 2017-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:22:45.275106
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2016-07-01 2017-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:24:38.253764
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2016-07-01 2017-01-01.tsv
+New query 'Google stock'
+New query calibrated!

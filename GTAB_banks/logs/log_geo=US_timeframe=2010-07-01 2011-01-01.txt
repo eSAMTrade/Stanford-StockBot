@@ -49,3 +49,63 @@ Querying pairs...
 Total range: 1.0610439535116287e-05
 Saving anchorbank as '/content/drive/MyDrive/Courses/2021-22 Spring/CS230/CS230/GTAB_banks/output/google_anchorbanks/google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv'...
 AnchorBank init done.
+
+2022-05-23 20:57:35.796101
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-23 21:00:35.610152
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 21:45:32.067220
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 21:53:28.724605
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'google'
+New query calibrated!
+
+2022-05-24 22:05:00.868462
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'GOOG stock'
+New query calibrated!
+
+2022-05-24 22:05:58.765156
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-24 22:07:18.194000
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'GOOG stock'
+New query calibrated!
+
+2022-05-24 22:14:32.520494
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 10:11:56.352842
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:18:58.725504
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:22:03.341130
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 14:23:56.902306
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2010-07-01 2011-01-01.tsv
+New query 'Google stock'
+New query calibrated!
