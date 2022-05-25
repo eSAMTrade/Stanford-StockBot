@@ -76,7 +76,8 @@ class LSTM_Model():
     def __init__(self,tickerSymbol, start, end,
                  past_history = 60, forward_look = 1, train_test_split = 0.8, batch_size = 30,
                  epochs = 50, steps_per_epoch = 200, validation_steps = 50, verbose = 0, infer_train = True,
-                 depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True):
+                 depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True,
+                 custom_loss = False):
         self.tickerSymbol = tickerSymbol
         self.start = start
         self.end = end
@@ -94,6 +95,11 @@ class LSTM_Model():
         self.plot_values = plot_values
         self.plot_bot = plot_bot
         self.infer_train = infer_train
+        self.custom_loss = custom_loss
+
+    def custom_loss_def(self,y_true,y_pred):
+        self.weights = np.float32(1.0 + 0.1*np.linspace(0,self.forward_look-1,self.forward_look)/20.0)
+        return tf.math.reduce_mean(tf.math.square(tf.multiply(self.weights,y_true - y_pred)))
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
         self.data = []
@@ -166,9 +172,13 @@ class LSTM_Model():
         if self.naive is False:
             self.model.add(tf.keras.layers.LSTM(20))
         self.model.add(tf.keras.layers.Dense(self.forward_look))
+        if self.custom_loss:
+            self.model.compile(optimizer='Adam',
+                      loss=self.custom_loss_def, metrics=['mse'])
+        else:
+            self.model.compile(optimizer='Adam',
+                               loss='mse', metrics=['mse'])
 
-        self.model.compile(optimizer='Adam',
-                      loss='mse', metrics=['mse'])
         self.create_p_test_train()
         self.hist = self.model.fit(self.p_train, epochs = self.epochs, steps_per_epoch = self.steps_per_epoch,
                   validation_data = self.p_test, validation_steps = self.validation_steps,
@@ -202,7 +212,7 @@ class LSTM_Model():
         self.RMS_error_train = self.hist.history['mse'][-1]
         if self.infer_train:
             self.pred = np.array(self.pred)
-            self.pred_update = np.array(self.pred_update)
+            self.pred_update_train = np.array(self.pred_update_train)
         if self.forward_look>1:
             self.RMS_error_update = (np.mean(((self.ytest[:self.values - 1, 0, 0] - self.pred_update[1:, 0]) / (
             self.ytest[:self.values - 1, 0, 0])) ** 2)) ** 0.5/self.batch_size
@@ -226,14 +236,14 @@ class LSTM_Model():
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s.png' % (
-            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s_%s.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)))
             plt.figure()
             plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
             plt.xlabel("Days")
             plt.ylabel("Prediction difference")
-            plt.savefig('../images/Difference_%d_%d_%d_%d_%s.png' % (
-            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+            plt.savefig('../images/Difference_%d_%d_%d_%d_%s_%s.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)))
         else:
             plt.plot(self.yt[:self.values-1],label='actual (%s)'%self.ts)
             plt.plot(self.pred[1:],label='predicted (%s)'%self.ts)
@@ -242,14 +252,14 @@ class LSTM_Model():
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s.png'%(
-            self.depth,int(self.naive), self.past_history, self.forward_look, self.ts))
+            plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s_%s.png'%(
+            self.depth,int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)))
             plt.figure()
             plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
             plt.xlabel("Days")
             plt.ylabel("Prediction difference")
-            plt.savefig('../images/Difference_%d_%d_%d_%d_%s.png' % (
-            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+            plt.savefig('../images/Difference_%d_%d_%d_%d_%s_%s.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)))
         print('The relative test RMS error is %f'%self.RMS_error)
         print('The relative test RMS error for the updated dataset is %f' % self.RMS_error_update)
         if self.infer_train:
@@ -304,7 +314,7 @@ class LSTM_Model():
         plt.xlabel("Days")
         plt.ylabel("Percentage growth")
         plt.legend()
-        plt.savefig('../images/Bot_prediction_%d_%d_%d_%d_%s.png' % (self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+        plt.savefig('../images/Bot_prediction_%d_%d_%d_%d_%s_%s.png' % (self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)))
 
 
 class LSTM_ED_Model():
@@ -547,7 +557,7 @@ class LSTM_ED_Model():
             self.yt = model.ytest
             self.ts = model.tickerSymbol
         self.infer_values(self.xt, self.yt, self.ts)
-        self.arch_plot()
+        # self.arch_plot()
 
     def full_workflow_and_plot(self, model=None):
         self.full_workflow(model=model)
