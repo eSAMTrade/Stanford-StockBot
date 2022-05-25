@@ -26,17 +26,5 @@ end="2019-12-31"
 ##############################################
 tickeranalysis = tickerSymbols[0]
 LSTM_1 = LSTM_ED_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True, verbose = True)
-# LSTM_1.get_ticker_values()
-# LSTM_1.prepare_test_train()
-# LSTM_1.model_LSTM()
-# LSTM_1.model_inference_LSTM()
-# print(LSTM_1.model)
-
-# LSTM_1.get_ticker_values()
-# LSTM_1.prepare_test_train()
-# print(LSTM_1.xtest.shape)
-# print(LSTM_1.ytest.shape)
 LSTM_1.full_workflow_and_plot()
-# LSTM_1.plot_bot_decision()
-
-# plt.show()
+plt.show()
