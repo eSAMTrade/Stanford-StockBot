@@ -13,15 +13,27 @@ cd code-directory
 git clone https://gitlab.com/cs230_stock_analysis/stock_price_prediction.git
 cd stock_price_prediction
 python3 -m pip install -r py_requirements.txt
+cd tests
 ```
 
 ## Usage
-The predictions using a series of LSTM networks and for different tickers can be obtained by running:
+The predictions using a series of LSTM networks and for different tickers can be obtained by running (also to produce Figs.1, 2a, 2b and 6 from the final report):
 ```
 python3 train_single_test.py
 ```
-
-The convergence in the stock values as we move closer to the prediction day (in the case of multiple days being predicted at once) can be obtained using:
+The encoder-decoder results from the report in Fig. 3 can be produced by:
+```
+python3 train_single_test_ED.py
+```
+Using multiple stocks of a given industry to train model and then carry out inference, as shown in Fig. 4a can be produced by:
+```
+python3 train_categorical_test.py
+```
+The cross-correlation between stocks and effect fo inferring stock prices from models trained on different industries, as shown in Figs. 4b and 4c can be produced by:
+```
+python3 correlation_strengths.py
+```
+The comparison between predictions using the custom loss function and the regular loss function while predicting multiple dayds in advance, as shwon in Fig. 5 can be produced by:
 ```
 python3 test_forward_decay.py
 ```
