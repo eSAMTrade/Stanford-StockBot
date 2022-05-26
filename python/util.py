@@ -911,7 +911,7 @@ class LSTM_Model_MS():
 class LSTM_Model_MS_GT():
     def __init__(self,tickerSymbol, tickerName, start = '2010-01-01', end = '2020-12-31',
                  past_history = 60, forward_look = 1, train_test_split = 0.8, batch_size = 30,
-                 epochs = 50, steps_per_epoch = 200, validation_steps = 50, verbose = 0, infer_train = True,
+                 epochs = 50, steps_per_epoch = 200, validation_steps = 50, verbose = False, infer_train = True,
                  depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True, tickerSymbolList = None, tickerNameDict = None, sameTickerTestTrain = True):
         self.tickerSymbol = tickerSymbol
         self.tickerName = tickerName
@@ -1019,7 +1019,7 @@ class LSTM_Model_MS_GT():
             data = tickerDf.values
             trend_points = self.get_gtrends_data(self.tickerNameDict[tickerSymbol])
             trend_points = trend_points[tickerDf.index]
-            tset = np.concatenate([trend_points.values.reshape([-1, 1]), data.reshape([-1, 1])], axis=1)
+            tset = np.concatenate([data.reshape([-1, 1]), trend_points.values.reshape([-1, 1])], axis=1)
             self.y_all.append(tset)
             self.maxTestValues = len(data) - int(len(data) * self.train_test_split)
         if self.sameTickerTestTrain == False: # This indicates self.tickerSymbol is the test ticker and self.tickerSymbolList is the training set
@@ -1029,7 +1029,7 @@ class LSTM_Model_MS_GT():
             data = tickerDf.values
             trend_points = self.get_gtrends_data(self.tickerNameDict[tickerSymbol])
             trend_points = trend_points[tickerDf.index]
-            tset = np.concatenate([trend_points.values.reshape([-1, 1]), data.reshape([-1, 1])], axis=1)
+            tset = np.concatenate([data.reshape([-1, 1]), trend_points.values.reshape([-1, 1])], axis=1)
             self.ytestSet = tset
             self.maxTestValues = len(data.values) - int(len(data.values) * self.train_test_split)
 
@@ -1065,8 +1065,8 @@ class LSTM_Model_MS_GT():
             self.ytrain = []
             for y in self.y_all:
                 training_size = int(y.size)
-                training_mean = y[:training_size].mean()  # get the average
-                training_std = y[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
+                training_mean = y[:training_size].mean(axis=0)  # get the average
+                training_std = y[:training_size].std(axis=0)  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
                 y = (y - training_mean) / training_std  # prep data, use mean and standard deviation to maintain distribution and ratios
                 data, target = self.data_preprocess(y, 0, training_size, self.past_history, forward_look=self.forward_look)
                 self.xtrain.append(data)
@@ -1107,7 +1107,7 @@ class LSTM_Model_MS_GT():
             self.model.add(tf.keras.layers.LSTM(20, return_sequences=True))
         if self.naive is False:
             self.model.add(tf.keras.layers.LSTM(20))
-        self.model.add(tf.keras.layers.Dense(self.forward_look))
+        self.model.add(tf.keras.layers.Dense(2 * self.forward_look))
 
         self.model.compile(optimizer='Adam',
                       loss='mse', metrics=['mse'])
@@ -1115,6 +1115,7 @@ class LSTM_Model_MS_GT():
         self.hist = self.model.fit(self.p_train, epochs = self.epochs, steps_per_epoch = self.steps_per_epoch,
                   validation_data = self.p_test, validation_steps = self.validation_steps,
                   verbose = self.verbose)
+        print('Model Built')
 
     def infer_values(self, xtest, ytest, ts = None):
         self.pred = []
@@ -1129,7 +1130,7 @@ class LSTM_Model_MS_GT():
             self.y_pred_update = self.model.predict(self.usetest[i,:,:].reshape(1,xtest.shape[1],xtest.shape[2]))[0][:]
             self.pred.append(self.y_pred)
             self.pred_update.append(self.y_pred_update)
-            self.usetest[np.linspace(i+1,i+self.past_history-1,self.past_history-1,dtype=int),np.linspace(self.past_history-2,0,self.past_history-1,dtype=int),:] =  self.y_pred_update[0]
+            self.usetest[np.linspace(i+1,i+self.past_history-1,self.past_history-1,dtype=int),np.linspace(self.past_history-2,0,self.past_history-1,dtype=int),:] =  self.y_pred_update[:]
             if self.infer_train:
                 self.y_pred_train = self.model.predict(self.xtrain[i, :, :].reshape(1, self.xtrain.shape[1], self.xtrain.shape[2]))[0][:]
                 self.y_pred_update_train = \
@@ -1180,8 +1181,8 @@ class LSTM_Model_MS_GT():
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
         else:
             plt.plot(self.yt[:self.values-1,0],label='actual (%s)'%self.ts)
-            plt.plot(self.pred[1:],label='predicted (%s)'%self.ts)
-            plt.plot(self.pred_update[1:],label='predicted (update)')
+            plt.plot(self.pred[1:,0],label='predicted (%s)'%self.ts)
+            plt.plot(self.pred_update[1:,0],label='predicted (update)')
             plt.xlabel("Days")
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
@@ -1189,7 +1190,7 @@ class LSTM_Model_MS_GT():
             plt.savefig('../images/MultiStock_prediction_%d_%d_%d_%d_%s.png'%(
             self.depth,int(self.naive), self.past_history, self.forward_look, self.ts))
             plt.figure()
-            plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
+            plt.plot(self.pred[1:,0] - self.pred_update[1:,0], label='difference (%s)' % self.ts)
             plt.xlabel("Days")
             plt.ylabel("Prediction difference")
             plt.savefig('../images/MSDifference_%d_%d_%d_%d_%s.png' % (
@@ -1250,8 +1251,8 @@ class LSTM_Model_MS_GT():
             pred_update = np.asarray(self.pred_update[1:, 0]).reshape(-1,)
         else:
             ideal = self.yt[:self.values - 1]
-            pred = np.asarray(self.pred[1:]).reshape(-1,)
-            pred_update = np.asarray(self.pred_update[1:]).reshape(-1,)
+            pred = np.asarray(self.pred[1:, 0]).reshape(-1,)
+            pred_update = np.asarray(self.pred_update[1:, 0]).reshape(-1,)
         control_ideal = get_control_vector(ideal)
         control_pred = get_control_vector(pred)
         control_pred_update = get_control_vector(pred_update)

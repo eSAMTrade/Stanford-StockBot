@@ -150,3 +150,28 @@ New query calibrated!
 Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
 New query 'Google stock'
 New query calibrated!
+
+2022-05-25 20:43:56.946290
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 20:52:13.622201
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 21:01:41.675638
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 21:20:39.752341
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'Google stock'
+New query calibrated!
+
+2022-05-25 21:28:54.083249
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2011-07-01 2012-01-01.tsv
+New query 'Google stock'
+New query calibrated!

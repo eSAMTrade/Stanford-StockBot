@@ -32,7 +32,9 @@ tickerName = 'Google'
 
 LSTM_1 = LSTM_Model_MS_GT(tickerSymbol = tickeranalysis, tickerName = tickerName,
                           start = start, end = end,
-                          depth = 0, naive = True, sameTickerTestTrain = True)
+                          depth = 0, naive = True, sameTickerTestTrain = True, verbose = True)
 
-LSTM_1.get_ticker_values()
-LSTM_1.prepare_test_train()
+# LSTM_1.get_ticker_values()
+# LSTM_1.prepare_test_train()
+LSTM_1.full_workflow_and_plot()
+LSTM_1.plot_bot_decision()
