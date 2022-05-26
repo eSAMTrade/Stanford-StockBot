@@ -11,6 +11,12 @@ from tensorflow import keras
 import gtab
 
 def get_categorical_tickers():
+    '''
+    This Function returns a dictionary of tickers for different industry types
+    :return:
+    ticker_dict: Dictionary of 9 different industry types with over 8 tickers each
+    tickerSymbols: Set of three tickers
+    '''
     ticker_dict = {}
     all_tickers = []
     ticker_dict['energy'] = ['XOM', 'CVX', 'SHEL', 'PTR', 'TTE', 'BP', 'PBR', 'SNP', 'SLB', 'VLO']
@@ -38,10 +44,59 @@ def get_categorical_tickers():
     tickerSymbols = ['BRK-A', 'GOOG', 'MSFT']
     return ticker_dict, tickerSymbols
 
+def get_company_names():
+    '''
+    Get a dictionary of search strings corresponding to different ticker labels
+    :return:
+    ticker_dict: Dictionary of search strings given a stock ticker
+    '''
+    ticker_dict = {}
+    all_tickers = []
+    ticker_dict['energy'] = {'XOM': 'Exxon Mobil', 'CVX': 'Chevron', 'SHEL': 'Shell', 'PTR': 'PetroChina',
+                             'TTE': 'TotalEnergies', 'BP': 'BP', 'PBR': 'Petroleo Brasileiro',
+                             'SNP': 'China Petroleum', 'SLB': 'Schlumberger', 'VLO': 'Valero'}
+    '''
+    ticker_dict['materials'] = ['BHP', 'LIN', 'RIO', 'DD', 'SHW', 'CTA-PB', 'APD']
+    ticker_dict['industrials'] = ['UPS', 'HON', 'LMT', 'BA', 'GE', 'MMM', 'RTX', 'CAT', 'WM', 'ABB', 'ETN', 'EMR',
+                                  'FDX', 'TRI']
+    ticker_dict['utilities'] = ['NEE', 'DUK', 'NGG', 'AEP', 'XEL','AWK' ,'ETR', 'PCG']
+    ticker_dict['healthcare'] = ['UNH', 'JNJ', 'PFE', 'NVO', 'TMO', 'MRK', 'AZN', 'NVS', 'DHR', 'AMGN', 'CVS', 'GSK',
+                                 'ZTS', 'GILD']
+    ticker_dict['financials'] = ['BRK-A', 'V', 'JPM', 'BAC', 'MA', 'WFC', 'C-PJ', 'MS', 'RY', 'AXP']
+    ticker_dict['discretionary'] = ['AMZN', 'TSLA', 'HD', 'BABA', 'TM', 'NKE', 'MCD', 'SBUX', 'F', 'MAR', 'GM', 'ORLY',
+                                    'LILI', 'HMC', 'CMG', 'HLT']
+    ticker_dict['staples'] = ['WMT', 'PG', 'KO', 'COST', 'PEP', 'BUD', 'UL', 'TGT', 'MDLZ', 'CL', 'DG', 'KHC', 'KDP',
+                              'HSY']
+    ticker_dict['IT'] = ['AAPL', 'MSFT', 'TSM', 'NVDA', 'AVGO', 'CSCO', 'ORCL', 'ACN', 'ADBE', 'INTC', 'CRM', 'TXN',
+                         'QCOM', 'AMD', 'IBM', 'SONY', 'AMAT', 'INFY', 'ADI', 'MU', 'LRCX']
+    ticker_dict['communication'] = ['GOOG', 'FB', 'DIS', 'VZ', 'CMCSA', 'TMUS', 'T', 'NFLX', 'SNAP', 'VOD', 'BAIDU',
+                                    'TWTR', 'EA']
+    ticker_dict['estate'] = ['PLD', 'AMT', 'CCI', 'EQIX', 'SPG', 'DLR', 'WELL', 'EQR', 'AVB', 'WY', 'INVH', 'MAA']
+    ticker_keys = []
+    for key in ticker_dict.keys():
+        ticker_keys.append(key)
+        all_tickers.append(ticker_dict[key])
+    ticker_dict['all'] = all_tickers
+    '''
+    return ticker_dict
+
 def cross_corr(a,b):
+    '''
+    Compute the cross-correlation between
+    :param a: Time-series data of first stock
+    :param b: Time-series data of second stock
+    :return: Cross-correlation of the two stocks that are input
+    '''
     return (a*b).sum()/((a**2).sum()*(b**2).sum())**0.5
 
 def get_tick_values(tickerSymbol, start, end):
+    '''
+    Function to extract the time series data
+    :param tickerSymbol: String of stock ticker
+    :param start: String of starting date of the time-series data
+    :param end: String of ending date of the time-series data
+    :return: type(list): Time series data
+    '''
     tickerData = yf.Ticker(tickerSymbol)
     tickerDf = yf.download(tickerSymbol, start=start, end=end)
     tickerDf = tickerDf['Adj Close']
@@ -49,9 +104,20 @@ def get_tick_values(tickerSymbol, start, end):
     return data.values
 
 def get_control_vector(val):
+    '''
+    Returns the mask of day instances where stock purchase/sell decisions are to be made
+    :param val: Input array of stock values
+    :return: np.array of decisions maks labels (-2/0/2)
+    '''
     return np.diff(np.sign(np.diff(val)))
 
 def buy_and_sell_bot(val,controls):
+    '''
+    Returns the growth of investment over time as function of the input decision mask and the stock values
+    :param val: np.array of the actual stock value over time
+    :param controls: np.array of the control mask to make purchase/sell decisions
+    :return: np.array of percentage growth value of the invested stock
+    '''
     inv = []
     curr_val = 100
     inds = np.where(controls)[0]
@@ -74,11 +140,35 @@ def buy_and_sell_bot(val,controls):
 
 
 class LSTM_Model():
+    '''
+    Class to train and infer stock price for one particular stock
+    '''
     def __init__(self,tickerSymbol, start, end,
                  past_history = 60, forward_look = 1, train_test_split = 0.8, batch_size = 30,
                  epochs = 50, steps_per_epoch = 200, validation_steps = 50, verbose = 0, infer_train = True,
                  depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True,
                  custom_loss = False):
+        '''
+        Initialize parameters for the class
+        :param tickerSymbol: String of Ticker symbol to train on
+        :param start: String of start date of time-series data
+        :param end: String of end date of time-series data
+        :param past_history: Int of past number of days to look at
+        :param forward_look: Int of future days to predict at a time
+        :param train_test_split: Float of fraction train-test split
+        :param batch_size: Int of mini-batch size
+        :param epochs: Int of total number of epochs in training
+        :param steps_per_epoch: Int for total number of mini-batches to run over per epoch
+        :param validation_steps: Int of total number of steps to use while validating with the dev set
+        :param verbose: Int to decide to print training stage results
+        :param infer_train: Flag to carry out prediction on training set
+        :param depth: Int to decide depth of stacked LSTM
+        :param naive: Flag for deciding if we need a Vanila model
+        :param values: Int for number of days to predict for by iteratively updating the time-series histroy
+        :param plot_values: Flag to plot
+        :param plot_bot: Flag to plot the investment growth by the decision making bot
+        :param custom_loss: Flag to decude if custom loss function needs to be applied
+        '''
         self.tickerSymbol = tickerSymbol
         self.start = start
         self.end = end
@@ -99,10 +189,25 @@ class LSTM_Model():
         self.custom_loss = custom_loss
 
     def custom_loss_def(self,y_true,y_pred):
+        '''
+        Definition of the custom loss function
+        :param y_true: Np.array of true value
+        :param y_pred: np.array of predicted value
+        :return: Customised loss function as tf.tensor
+        '''
         self.weights = np.float32(1.0 + 0.1*np.linspace(0,self.forward_look-1,self.forward_look)/20.0)
         return tf.math.reduce_mean(tf.math.square(tf.multiply(self.weights,y_true - y_pred)))
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
+        '''
+        Preprocess the data to make either the test set or the train set
+        :param dataset: np.array of time-series data
+        :param iStart: int of index start
+        :param iEnd: int of index end
+        :param sHistory: int number of days in history that we need to look at
+        :param forward_look: int of number of days in the future that needs to predicted
+        :return: returns a list of test/train data
+        '''
         self.data = []
         self.target = []
         iStart += sHistory
@@ -126,6 +231,9 @@ class LSTM_Model():
         self.target = np.array(self.target)
 
     def plot_history_values(self):
+        '''
+        Plots time-series data of the chosen ticker
+        '''
         tickerData = yf.Ticker(self.tickerSymbol)
         tickerDf = yf.download(self.tickerSymbol, start=self.start, end=self.end)
         tickerDf = tickerDf['Adj Close']
@@ -138,6 +246,9 @@ class LSTM_Model():
         plt.show()
 
     def get_ticker_values(self):
+        '''
+        Get ticker values in a list
+        '''
         tickerData = yf.Ticker(self.tickerSymbol)
         tickerDf = yf.download(self.tickerSymbol, start=self.start, end=self.end)
         tickerDf = tickerDf['Adj Close']
@@ -145,6 +256,9 @@ class LSTM_Model():
         self.y = data.values
 
     def prepare_test_train(self):
+        '''
+        Create the dataset from the extracted time-series data
+        '''
         training_size = int(self.y.size * self.train_test_split)
         training_mean = self.y[:training_size].mean()  # get the average
         training_std = self.y[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
@@ -155,6 +269,9 @@ class LSTM_Model():
         self.xtest, self.ytest = self.data, self.target
 
     def create_p_test_train(self):
+        '''
+        Prepare shuffled train and test data
+        '''
         BATCH_SIZE = self.batch_size
         BUFFER_SIZE = self.y.size
         p_train = tf.data.Dataset.from_tensor_slices((self.xtrain, self.ytrain))
@@ -163,6 +280,9 @@ class LSTM_Model():
         self.p_test = p_test.batch(BATCH_SIZE).repeat()
 
     def model_LSTM(self):
+        '''
+        Create the stacked LSTM model and train it using the shuffled train set
+        '''
         self.model = tf.keras.models.Sequential()
         if self.naive:
             self.model.add(tf.keras.layers.LSTM(20, input_shape = self.xtrain.shape[-2:]))
@@ -186,6 +306,13 @@ class LSTM_Model():
                   verbose = self.verbose)
 
     def infer_values(self, xtest, ytest, ts):
+        '''
+        Infer values by using the test set
+        :param xtest: test dataset
+        :param ytest: actual value dataset
+        :param ts: tikcer symbol
+        :return:
+        '''
         self.pred = []
         self.pred_update = []
         self.usetest = xtest.copy()
@@ -228,6 +355,9 @@ class LSTM_Model():
                     self.ytrain[:self.values - 1])) ** 2)) ** 0.5/self.batch_size
 
     def plot_test_values(self):
+        '''
+        Plot predicted values against actual values
+        '''
         plt.figure()
         if self.forward_look>1:
             plt.plot(self.yt[:self.values-1,0,0],label='actual (%s)'%self.ts)
@@ -268,11 +398,19 @@ class LSTM_Model():
             print('The relative train RMS error for the updated dataset is %f' % self.RMS_error_update_train)
             
     def arch_plot(self):
+        '''
+        Plot the network architecture
+        '''
     	dot_img_file = '../images/LSTM_arch_depth%d_naive%d.png' %( self.depth, int(self.naive))
     	tf.keras.utils.plot_model(self.model, to_file=dot_img_file, show_shapes=True)
     
 
     def full_workflow(self, model = None):
+        '''
+        Workflow to carry out the entire process end-to-end
+        :param model: Choose which model to use to predict inferred values
+        :return:
+        '''
         self.get_ticker_values()
         self.prepare_test_train()
         self.model_LSTM()
@@ -288,11 +426,19 @@ class LSTM_Model():
         # self.arch_plot()
 
     def full_workflow_and_plot(self, model = None):
+        '''
+        Workflow to carry out the entire process end-to-end
+        :param model: Choose which model to use to plot inferred values
+        :return:
+        '''
         self.full_workflow(model = model)
         self.plot_test_values()
         
 
     def plot_bot_decision(self):
+        '''
+        calculate investment growth from the inferred prediction value and plot the resulting growth
+        '''
         if self.forward_look > 1:
             ideal = self.yt[:self.values - 1, 0, 0]
             pred = np.asarray(self.pred[1:, 0]).reshape(-1,)
