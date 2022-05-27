@@ -22,19 +22,40 @@ ticker_dict, tickerSymbols = get_categorical_tickers()
 start="2010-01-01"
 end="2019-12-31"
 ##############################################
-# tickeranalysis = ticker_dict['energy'][0]
-# tickerList = ticker_dict['energy']
-# tickerList.remove(tickeranalysis)
-tickeranalysis = 'GOOG'
-tickerList = ['GOOG']
-tickerName = 'Google'
-# tickerNameDict = {'GOOG' : 'Google'}
+tickeranalysis = ticker_dict['energy'][0]
+tickerList = ticker_dict['energy']
+tickerList.remove(tickeranalysis)
+tickerNameDict = get_company_names()
+tickerNameDict = tickerNameDict['energy']
+# tickeranalysis = 'GOOG'
+# tickerList = ['GOOG']
+tickerName = tickerNameDict[tickeranalysis]
+tickerNameDict.pop(tickeranalysis)
+
+#Manually popping out bad keywords
+tickerNameDict.pop('TTE')
+tickerList.remove('TTE')
+tickerNameDict.pop('PBR')
+tickerList.remove('PBR')
+tickerNameDict.pop('SNP')
+tickerList.remove('SNP')
 
 LSTM_1 = LSTM_Model_MS_GT(tickerSymbol = tickeranalysis, tickerName = tickerName,
                           start = start, end = end,
-                          depth = 0, naive = True, sameTickerTestTrain = True, verbose = True)
+                          depth = 0, naive = True, sameTickerTestTrain = True, verbose = True,
+                          tickerSymbolList = tickerList, tickerNameDict = tickerNameDict)
 
 # LSTM_1.get_ticker_values()
 # LSTM_1.prepare_test_train()
 LSTM_1.full_workflow_and_plot()
 LSTM_1.plot_bot_decision()
+
+LSTM_2 = LSTM_Model_MS_GT(tickerSymbol = tickeranalysis, tickerName = tickerName,
+                          start = start, end = end,
+                          depth = 0, naive = True, sameTickerTestTrain = False, verbose = True,
+                          tickerSymbolList = tickerList, tickerNameDict = tickerNameDict)
+
+# LSTM_1.get_ticker_values()
+# LSTM_1.prepare_test_train()
+LSTM_2.full_workflow_and_plot()
+LSTM_2.plot_bot_decision()

@@ -169,3 +169,143 @@ New query calibrated!
 Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
 New query 'Google stock'
 New query calibrated!
+
+2022-05-26 14:29:41.417851
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Chevron stock'
+New query calibrated!
+
+2022-05-26 14:30:44.295659
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Shell stock'
+New query calibrated!
+
+2022-05-26 14:31:57.605761
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'PetroChina stock'
+New query calibrated!
+
+2022-05-26 15:09:51.620460
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Chevron stock'
+New query calibrated!
+
+2022-05-26 15:10:49.240262
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Shell stock'
+New query calibrated!
+
+2022-05-26 15:11:53.110379
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'PetroChina stock'
+New query calibrated!
+
+2022-05-26 15:18:51.890346
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Chevron stock'
+New query calibrated!
+
+2022-05-26 15:19:43.760541
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Shell stock'
+New query calibrated!
+
+2022-05-26 15:20:42.191195
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'PetroChina stock'
+New query calibrated!
+
+2022-05-26 15:21:45.445995
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'BP stock'
+New query calibrated!
+
+2022-05-26 15:36:15.595846
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Chevron stock'
+New query calibrated!
+
+2022-05-26 15:37:15.880381
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Shell stock'
+New query calibrated!
+
+2022-05-26 15:38:24.327534
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'PetroChina stock'
+New query calibrated!
+
+2022-05-26 15:39:31.016079
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'BP stock'
+New query calibrated!
+
+2022-05-26 15:40:39.662944
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Schlumberger stock'
+New query calibrated!
+
+2022-05-26 15:41:35.948569
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Valero stock'
+New query calibrated!
+
+2022-05-26 15:54:11.327357
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Chevron stock'
+New query calibrated!
+
+2022-05-26 15:55:11.077905
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Shell stock'
+New query calibrated!
+
+2022-05-26 15:56:16.661321
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'PetroChina stock'
+New query calibrated!
+
+2022-05-26 15:57:21.777175
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'BP stock'
+New query calibrated!
+
+2022-05-26 15:58:13.812298
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Schlumberger stock'
+New query calibrated!
+
+2022-05-26 15:59:06.342842
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Valero stock'
+New query calibrated!
+
+2022-05-26 20:39:21.111090
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Chevron stock'
+New query calibrated!
+
+2022-05-26 20:40:22.935298
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Shell stock'
+New query calibrated!
+
+2022-05-26 20:41:33.410145
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'PetroChina stock'
+New query calibrated!
+
+2022-05-26 20:42:42.980128
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'BP stock'
+New query calibrated!
+
+2022-05-26 20:46:01.234373
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Schlumberger stock'
+New query calibrated!
+
+2022-05-26 20:46:58.813944
+Using ../GTAB_banks\output\google_anchorbanks\google_anchorbank_geo=US_timeframe=2018-07-01 2019-01-01.tsv
+New query 'Valero stock'
+New query calibrated!

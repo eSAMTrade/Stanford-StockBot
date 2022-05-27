@@ -401,8 +401,8 @@ class LSTM_Model():
         '''
         Plot the network architecture
         '''
-    	dot_img_file = '../images/LSTM_arch_depth%d_naive%d.png' %( self.depth, int(self.naive))
-    	tf.keras.utils.plot_model(self.model, to_file=dot_img_file, show_shapes=True)
+        dot_img_file = '../images/LSTM_arch_depth%d_naive%d.png' %( self.depth, int(self.naive))
+        tf.keras.utils.plot_model(self.model, to_file=dot_img_file, show_shapes=True)
     
 
     def full_workflow(self, model = None):
@@ -1139,7 +1139,11 @@ class LSTM_Model_MS_GT():
                 trend_val = trend_val[:-1]
                 trend_points = trend_val.copy()
             else:
-                trend_val = trend_val * (last_val / trend_val[0])
+                if trend_val[0] != 0:
+                    trend_val = trend_val * (last_val / trend_val[0])
+                else:
+                    trend_val = trend_val * ((last_val + 1) / (trend_val[0] + 1))
+
                 last_val = trend_val[-1:].values
                 trend_val = trend_val[:-1]
                 trend_points = pd.concat([trend_points, trend_val])
@@ -1149,7 +1153,10 @@ class LSTM_Model_MS_GT():
             t.set_active_gtab("google_anchorbank_geo=US_timeframe=" + timeframe_str + ".tsv")
             nq = t.new_query(query)
             trend_val = nq['max_ratio'].copy()
-            trend_val = trend_val * (last_val / trend_val[0])
+            if trend_val[0] != 0:
+                trend_val = trend_val * (last_val / trend_val[0])
+            else:
+                trend_val = trend_val * ((last_val + 1) / (trend_val[0] + 1))
             last_val = trend_val[-1:].values
             trend_val = trend_val[:-1]
             trend_points = pd.concat([trend_points, trend_val])
@@ -1191,7 +1198,7 @@ class LSTM_Model_MS_GT():
                 training_size = int(len(y) * self.train_test_split)
                 training_mean = y[:training_size].mean(axis=0)  # get the average
                 training_std = y[:training_size].std(axis=0)  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
-                y = (y - training_mean) / training_std  # prep data, use mean and standard deviation to maintain distribution and ratios
+                y[:, 0] = (y[:, 0] - training_mean[0]) / training_std[0]  # prep data, use mean and standard deviation to maintain distribution and ratios
                 data, target = self.data_preprocess(y, 0, training_size, self.past_history, forward_look = self.forward_look)
                 self.xtrain.append(data)
                 self.ytrain.append(target)
@@ -1213,7 +1220,7 @@ class LSTM_Model_MS_GT():
                 training_size = int(y.size)
                 training_mean = y[:training_size].mean(axis=0)  # get the average
                 training_std = y[:training_size].std(axis=0)  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
-                y = (y - training_mean) / training_std  # prep data, use mean and standard deviation to maintain distribution and ratios
+                y[:, 0] = (y[:, 0] - training_mean[0]) / training_std[0]  # prep data, use mean and standard deviation to maintain distribution and ratios
                 data, target = self.data_preprocess(y, 0, training_size, self.past_history, forward_look=self.forward_look)
                 self.xtrain.append(data)
                 self.ytrain.append(target)
@@ -1224,9 +1231,9 @@ class LSTM_Model_MS_GT():
 
             y = self.ytestSet
             validation_size = int(y.size * self.train_test_split)
-            validation_mean = y[:validation_size].mean()  # get the average
-            validation_std = y[:validation_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
-            y = (y - validation_mean) / validation_std
+            validation_mean = y[:validation_size].mean(axis=0)  # get the average
+            validation_std = y[:validation_size].std(axis=0)  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
+            y[:, 0] = (y[:, 0] - validation_mean[0]) / validation_std[0]
             data, target = self.data_preprocess(y, 0, validation_size, self.past_history, forward_look=self.forward_look)
             self.xtest = data
             self.ytest = target
@@ -1317,13 +1324,13 @@ class LSTM_Model_MS_GT():
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.savefig('../images/MultiStock_prediction_%d_%d_%d_%d_%s.png' % (
+            plt.savefig('../images/GTMultiStock_prediction_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
             plt.figure()
             plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
             plt.xlabel("Days")
             plt.ylabel("Prediction difference")
-            plt.savefig('../images/MSDifference_%d_%d_%d_%d_%s.png' % (
+            plt.savefig('../images/GTMSDifference_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
         else:
             plt.plot(self.yt[:self.values-1,0],label='actual (%s)'%self.ts)
@@ -1333,13 +1340,13 @@ class LSTM_Model_MS_GT():
             plt.ylabel("Normalized stock price")
             plt.title('The relative RMS error is %f' % self.RMS_error)
             plt.legend()
-            plt.savefig('../images/MultiStock_prediction_%d_%d_%d_%d_%s.png'%(
+            plt.savefig('../images/GTMultiStock_prediction_%d_%d_%d_%d_%s.png'%(
             self.depth,int(self.naive), self.past_history, self.forward_look, self.ts))
             plt.figure()
             plt.plot(self.pred[1:,0] - self.pred_update[1:,0], label='difference (%s)' % self.ts)
             plt.xlabel("Days")
             plt.ylabel("Prediction difference")
-            plt.savefig('../images/MSDifference_%d_%d_%d_%d_%s.png' % (
+            plt.savefig('../images/GTMSDifference_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
         print('The relative test RMS error is %f'%self.RMS_error)
         print('The relative test RMS error for the updated dataset is %f' % self.RMS_error_update)
@@ -1396,7 +1403,7 @@ class LSTM_Model_MS_GT():
             pred = np.asarray(self.pred[1:, 0]).reshape(-1,)
             pred_update = np.asarray(self.pred_update[1:, 0]).reshape(-1,)
         else:
-            ideal = self.yt[:self.values - 1]
+            ideal = self.yt[:self.values - 1, 0]
             pred = np.asarray(self.pred[1:, 0]).reshape(-1,)
             pred_update = np.asarray(self.pred_update[1:, 0]).reshape(-1,)
         control_ideal = get_control_vector(ideal)
@@ -1413,5 +1420,5 @@ class LSTM_Model_MS_GT():
         plt.xlabel("Days")
         plt.ylabel("Percentage growth")
         plt.legend()
-        plt.savefig('../images/MSBot_prediction_%d_%d_%d_%d_%s.png' % (self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+        plt.savefig('../images/GTMSBot_prediction_%d_%d_%d_%d_%s.png' % (self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
 
