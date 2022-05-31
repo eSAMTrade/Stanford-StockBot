@@ -311,7 +311,7 @@ class LSTM_Model():
         :param xtest: test dataset
         :param ytest: actual value dataset
         :param ts: tikcer symbol
-        :return:
+        :return: model variables that store predicted data
         '''
         self.pred = []
         self.pred_update = []
@@ -465,10 +465,34 @@ class LSTM_Model():
 
 
 class LSTM_ED_Model():
+    '''
+    Class to train and infer stock price for one particular stock using the encoder decoder model
+    '''
     def __init__(self,tickerSymbol, start, end,
                  past_history = 60, forward_look = 1, train_test_split = 0.8, batch_size = 30,
                  epochs = 50, steps_per_epoch = 200, validation_steps = 50, verbose = 0,
                  depth = 1, naive = False, values = 200, tickerSymbolList = None, LSTM_latent_dim = 20):
+        '''
+        Initialize parameters for the class
+        :param tickerSymbol: String of Ticker symbol to train on
+        :param start: String of start date of time-series data
+        :param end: String of end date of time-series data
+        :param past_history: Int of past number of days to look at
+        :param forward_look: Int of future days to predict at a time
+        :param train_test_split: Float of fraction train-test split
+        :param batch_size: Int of mini-batch size
+        :param epochs: Int of total number of epochs in training
+        :param steps_per_epoch: Int for total number of mini-batches to run over per epoch
+        :param validation_steps: Int of total number of steps to use while validating with the dev set
+        :param verbose: Int to decide to print training stage results
+        :param infer_train: Flag to carry out prediction on training set
+        :param depth: Int to decide depth of stacked LSTM
+        :param naive: Flag for deciding if we need a Vanila model
+        :param values: Int for number of days to predict for by iteratively updating the time-series histroy
+        :param plot_values: Flag to plot
+        :param plot_bot: Flag to plot the investment growth by the decision making bot
+        :param tickerSymbolList: List of tickers to train the model on
+        '''
         self.tickerSymbol = tickerSymbol
         self.start = start
         self.end = end
@@ -490,6 +514,15 @@ class LSTM_ED_Model():
             self.tickerSymbolList = tickerSymbolList
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
+        '''
+        Preprocess the data to make either the test set or the train set
+        :param dataset: np.array of time-series data
+        :param iStart: int of index start
+        :param iEnd: int of index end
+        :param sHistory: int number of days in history that we need to look at
+        :param forward_look: int of number of days in the future that needs to predicted
+        :return: returns a list of test/train data
+        '''
         self.data_enc = []
         self.data_dec = []
         self.target = []
@@ -514,6 +547,9 @@ class LSTM_ED_Model():
         self.target = np.array(self.target)
 
     def plot_history_values(self):
+        '''
+        Plots time-series data of the chosen ticker
+        '''
         tickerData = yf.Ticker(self.tickerSymbol)
         tickerDf = yf.download(self.tickerSymbol, start=self.start, end=self.end)
         tickerDf = tickerDf['Adj Close']
@@ -526,6 +562,9 @@ class LSTM_ED_Model():
         plt.show()
 
     def get_ticker_values(self, option = 0):
+        '''
+        Get ticker values in a list
+        '''
         if option == 0:
             tickerData = yf.Ticker(self.tickerSymbol)
             tickerDf = yf.download(self.tickerSymbol, start=self.start, end=self.end)
@@ -542,6 +581,9 @@ class LSTM_ED_Model():
 
 
     def prepare_test_train(self):
+        '''
+        Create the dataset from the extracted time-series data
+        '''
         training_size = int(self.y.size * self.train_test_split)
         training_mean = self.y[:training_size].mean()  # get the average
         training_std = self.y[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
@@ -552,6 +594,9 @@ class LSTM_ED_Model():
         self.xtest, self.xtest_dec, self.ytest = self.data_enc, self.data_dec, self.target
 
     def create_p_test_train(self):
+        '''
+        Prepare shuffled train and test data
+        '''
         BATCH_SIZE = self.batch_size
         BUFFER_SIZE = self.y.size
         p_train = tf.data.Dataset.from_tensor_slices(((self.xtrain, self.xtrain_dec), self.ytrain))
@@ -560,6 +605,9 @@ class LSTM_ED_Model():
         self.p_test = p_test.batch(BATCH_SIZE).repeat()
 
     def model_LSTM(self):
+        '''
+        Create the stacked LSTM model and train it using the shuffled train set
+        '''
         latent_dim = self.LSTM_latent_dim
         encoder_inputs = keras.Input(shape=(None, 1))
         encoder = keras.layers.LSTM(latent_dim, return_state=True)  # Number of latent dimensions, defaults to 20
@@ -582,9 +630,6 @@ class LSTM_ED_Model():
         # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
         self.model = keras.Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
-        # configure model for training.
-        # self.model.compile(optimizer='Adam',
-        #               loss='mean_absolute_percentage_error')
         self.model.compile(optimizer='Adam',
                            loss='mse', metrics=['mse'])
         self.create_p_test_train()
@@ -620,6 +665,13 @@ class LSTM_ED_Model():
         )
 
     def infer_values(self, xtest, ytest, ts):
+        '''
+        Infer values by using the test set
+        :param xtest: test dataset
+        :param ytest: actual value dataset
+        :param ts: tikcer symbol
+        :return: model variables that store predicted data
+        '''
         self.pred = []
         self.pred_update = []
         self.usetest = xtest.copy()
@@ -644,21 +696,15 @@ class LSTM_ED_Model():
         self.pred = y_pred
 
 
-        # for i in range(self.values):
-        #     states_value = self.encoder_model.predict(xtest[i:i+1, :, :])
-        #     decoder_input = xtest[i:i+1, -1, :]  # choosing the most recent value to feed the decoder
-        #     new_pred, h, c = self.decoder_model.predict([decoder_input] + states_value)
-        #     y_pred = new_pred.reshape((-1, 1))
-        #     states_value = [h, c]
-        #     self.pred.append(y_pred)
-        # self.pred = np.array(self.pred)
-
         if self.forward_look>1:
             self.RMS_error = self.history.history['mse'][-1]
         else:
             self.RMS_error = self.history.history['mse'][-1]
 
     def plot_test_values(self):
+        '''
+        Plot predicted values against actual values
+        '''
         plt.figure()
         if self.forward_look > 1:
             print("Sorry, still working on this\n")
@@ -687,6 +733,9 @@ class LSTM_ED_Model():
         print('The relative RMS error is %f' % self.RMS_error)
 
     def arch_plot(self):
+        '''
+        Plot the network architecture
+        '''
     	dot_img_file = '../images/LSTM_ED_arch_depth%d_naive%d.png' %( self.depth, int(self.naive))
     	tf.keras.utils.plot_model(self.model, to_file=dot_img_file, show_shapes=True)
     	        
@@ -707,28 +756,31 @@ class LSTM_ED_Model():
         # self.arch_plot()
 
     def full_workflow_and_plot(self, model=None):
+        '''
+        Workflow to carry out the entire process end-to-end
+        :param model: Choose which model to use to predict inferred values
+        :return:
+        '''
         self.full_workflow(model=model)
         self.plot_test_values()
 
     def plot_bot_decision(self):
+        '''
+        calculate investment growth from the inferred prediction value and plot the resulting growth
+        '''
         if self.forward_look > 1:
             ideal = self.ytest[:self.values - 1, 0, 0]
             pred = np.asarray(self.pred[0,1:, 0]).reshape(-1, )
-            # pred_update = np.asarray(self.pred_update[1:, 0]).reshape(-1, )
         else:
             ideal = self.ytest[:self.values - 1,0,0]
             pred = np.asarray(self.pred[0,1:,0]).reshape(-1, )
-            # pred_update = np.asarray(self.pred_update[1:]).reshape(-1, )
         control_ideal = get_control_vector(ideal)
         control_pred = get_control_vector(pred)
-        # control_pred_update = get_control_vector(pred_update)
         bot_ideal = buy_and_sell_bot(ideal, control_ideal)
         bot_pred = buy_and_sell_bot(ideal, control_pred)
-        # bot_pred_update = buy_and_sell_bot(ideal, control_pred_update)
         plt.figure()
         plt.plot(bot_ideal, label='Ideal case (%.2f)' % bot_ideal[-1])
         plt.plot(bot_pred, label='From prediction (%.2f)' % bot_pred[-1])
-        # plt.plot(bot_pred_update, label='From prediction (updated) (%.2f)' % bot_pred_update[-1])
         plt.plot(ideal / ideal[0] * 100.0, label='Stock value(%s)' % self.ts)
         plt.xlabel("Days")
         plt.ylabel("Percentage growth")
@@ -738,10 +790,37 @@ class LSTM_ED_Model():
 
 
 class LSTM_Model_MS():
+    '''
+    Class to train and infer stock price for a model trained on multiple stocks of a given industry. The
+    list of tickers can be separately supplied to train beyond tickers from one industry.
+    '''
     def __init__(self,tickerSymbol, start, end,
                  past_history = 60, forward_look = 1, train_test_split = 0.8, batch_size = 30,
                  epochs = 50, steps_per_epoch = 200, validation_steps = 50, verbose = 0, infer_train = True,
-                 depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True, tickerSymbolList = None, sameTickerTestTrain = True):
+                 depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True,
+                 tickerSymbolList = None, sameTickerTestTrain = True):
+        '''
+        Initialize parameters for the class
+        :param tickerSymbol: String of Ticker symbol to train on
+        :param start: String of start date of time-series data
+        :param end: String of end date of time-series data
+        :param past_history: Int of past number of days to look at
+        :param forward_look: Int of future days to predict at a time
+        :param train_test_split: Float of fraction train-test split
+        :param batch_size: Int of mini-batch size
+        :param epochs: Int of total number of epochs in training
+        :param steps_per_epoch: Int for total number of mini-batches to run over per epoch
+        :param validation_steps: Int of total number of steps to use while validating with the dev set
+        :param verbose: Int to decide to print training stage results
+        :param infer_train: Flag to carry out prediction on training set
+        :param depth: Int to decide depth of stacked LSTM
+        :param naive: Flag for deciding if we need a Vanila model
+        :param values: Int for number of days to predict for by iteratively updating the time-series histroy
+        :param plot_values: Flag to plot
+        :param plot_bot: Flag to plot the investment growth by the decision making bot
+        :param tickerSymbolList: List of tickers to train the model on
+        :param sameTickerTestTrain: Falg, for model containing the ticker on which predictions are made
+        '''
         self.tickerSymbol = tickerSymbol
         self.start = start
         self.end = end
@@ -766,6 +845,15 @@ class LSTM_Model_MS():
             self.tickerSymbolList = tickerSymbolList
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
+        '''
+        Preprocess the data to make either the test set or the train set
+        :param dataset: np.array of time-series data
+        :param iStart: int of index start
+        :param iEnd: int of index end
+        :param sHistory: int number of days in history that we need to look at
+        :param forward_look: int of number of days in the future that needs to predicted
+        :return: returns a list of test/train data
+        '''
         data = []
         target = []
         iStart += sHistory
@@ -790,6 +878,9 @@ class LSTM_Model_MS():
         return data, target
 
     def plot_history_values(self):
+        '''
+        Plots time-series data of the chosen ticker
+        '''
         tickerData = yf.Ticker(self.tickerSymbol)
         tickerDf = yf.download(self.tickerSymbol, start=self.start, end=self.end)
         tickerDf = tickerDf['Adj Close']
@@ -802,6 +893,9 @@ class LSTM_Model_MS():
         plt.show()
 
     def get_ticker_values(self):
+        '''
+        Get ticker values in a list
+        '''
         self.y_all = []
         for tickerSymbol in self.tickerSymbolList:
             tickerData = yf.Ticker(tickerSymbol)
@@ -820,6 +914,9 @@ class LSTM_Model_MS():
 
 
     def prepare_test_train(self):
+        '''
+        Create the dataset from the extracted time-series data
+        '''
         self.y_size = 0
         if self.sameTickerTestTrain == True: # For each ticker, split data into train and test set. Test and validation are the same
             self.xtrain = []
@@ -875,6 +972,9 @@ class LSTM_Model_MS():
 
 
     def create_p_test_train(self):
+        '''
+        Prepare shuffled train and test data
+        '''
         BATCH_SIZE = self.batch_size
         BUFFER_SIZE = self.y_size
         p_train = tf.data.Dataset.from_tensor_slices((self.xtrain, self.ytrain))
@@ -883,6 +983,9 @@ class LSTM_Model_MS():
         self.p_test = p_test.batch(BATCH_SIZE).repeat()
 
     def model_LSTM(self):
+        '''
+        Create the stacked LSTM model and train it using the shuffled train set
+        '''
         self.model = tf.keras.models.Sequential()
         if self.naive:
             self.model.add(tf.keras.layers.LSTM(20, input_shape = self.xtrain.shape[-2:]))
@@ -902,6 +1005,13 @@ class LSTM_Model_MS():
                   verbose = self.verbose)
 
     def infer_values(self, xtest, ytest, ts = None):
+        '''
+        Infer values by using the test set
+        :param xtest: test dataset
+        :param ytest: actual value dataset
+        :param ts: tikcer symbol
+        :return: model variables that store predicted data
+        '''
         self.pred = []
         self.pred_update = []
         self.usetest = xtest.copy()
@@ -946,6 +1056,9 @@ class LSTM_Model_MS():
                     self.ytrain[:self.values - 1])) ** 2)) ** 0.5 / self.batch_size
 
     def plot_test_values(self):
+        '''
+        Plot predicted values against actual values
+        '''
         plt.figure()
         if self.forward_look>1:
             plt.plot(self.yt[:self.values-1,0,0],label='actual (%s)'%self.ts)
@@ -1006,6 +1119,9 @@ class LSTM_Model_MS():
         self.model_LSTM()
 
     def prepare_test(self):
+        '''
+        Create the dataset from the extracted time-series data
+        '''
         training_size = int(self.ytemp.size * self.train_test_split)
         training_mean = self.ytemp[:training_size].mean()  # get the average
         training_std = self.ytemp[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
@@ -1014,6 +1130,9 @@ class LSTM_Model_MS():
         self.xtest, self.ytest = data, target
 
     def get_tick_values(self):
+        '''
+        Get ticker values in a list
+        '''
         tickerData = yf.Ticker(self.tickerSymbol)
         tickerDf = yf.download(self.tickerSymbol, start=self.start, end=self.end)
         tickerDf = tickerDf['Adj Close']
@@ -1025,10 +1144,18 @@ class LSTM_Model_MS():
         self.prepare_test()
 
     def full_workflow_and_plot(self, model = None):
+        '''
+        Workflow to carry out the entire process end-to-end
+        :param model: Choose which model to use to predict inferred values
+        :return:
+        '''
         self.full_workflow(model = model)
         self.plot_test_values()
 
     def plot_bot_decision(self):
+        '''
+        calculate investment growth from the inferred prediction value and plot the resulting growth
+        '''
         if self.forward_look > 1:
             ideal = self.yt[:self.values - 1, 0, 0]
             pred = np.asarray(self.pred[1:, 0]).reshape(-1,)
@@ -1055,10 +1182,38 @@ class LSTM_Model_MS():
 
 
 class LSTM_Model_MS_GT():
+    '''
+    Class to train and infer stock price for a model trained on multiple stock ticker values and the
+    Google trend for the stock tickers.
+    '''
     def __init__(self,tickerSymbol, tickerName, start = '2010-01-01', end = '2020-12-31',
                  past_history = 60, forward_look = 1, train_test_split = 0.8, batch_size = 30,
                  epochs = 50, steps_per_epoch = 200, validation_steps = 50, verbose = False, infer_train = True,
-                 depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True, tickerSymbolList = None, tickerNameDict = None, sameTickerTestTrain = True):
+                 depth = 1, naive = False, values = 200, plot_values = True, plot_bot = True,
+                 tickerSymbolList = None, tickerNameDict = None, sameTickerTestTrain = True):
+        '''
+        Initialize parameters for the class
+        :param tickerSymbol: String of Ticker symbol to train on
+        :param start: String of start date of time-series data
+        :param end: String of end date of time-series data
+        :param past_history: Int of past number of days to look at
+        :param forward_look: Int of future days to predict at a time
+        :param train_test_split: Float of fraction train-test split
+        :param batch_size: Int of mini-batch size
+        :param epochs: Int of total number of epochs in training
+        :param steps_per_epoch: Int for total number of mini-batches to run over per epoch
+        :param validation_steps: Int of total number of steps to use while validating with the dev set
+        :param verbose: Int to decide to print training stage results
+        :param infer_train: Flag to carry out prediction on training set
+        :param depth: Int to decide depth of stacked LSTM
+        :param naive: Flag for deciding if we need a Vanila model
+        :param values: Int for number of days to predict for by iteratively updating the time-series histroy
+        :param plot_values: Flag to plot
+        :param plot_bot: Flag to plot the investment growth by the decision making bot
+        :param tickerSymbolList: List of tickers to train the model on
+        :param tickerNameDict: Dictionary of search values for a given set of tickers to query Google Trends data for
+        :param sameTickerTestTrain: Falg, for model containing the ticker on which predictions are made
+        '''
         self.tickerSymbol = tickerSymbol
         self.tickerName = tickerName
         self.start = start
@@ -1086,6 +1241,15 @@ class LSTM_Model_MS_GT():
             self.tickerNameDict = tickerNameDict
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
+        '''
+        Preprocess the data to make either the test set or the train set
+        :param dataset: np.array of time-series data
+        :param iStart: int of index start
+        :param iEnd: int of index end
+        :param sHistory: int number of days in history that we need to look at
+        :param forward_look: int of number of days in the future that needs to predicted
+        :return: returns a list of test/train data
+        '''
         data = []
         target = []
         iStart += sHistory
@@ -1110,6 +1274,9 @@ class LSTM_Model_MS_GT():
         return data, target
 
     def plot_history_values(self):
+        '''
+        Plots time-series data of the chosen ticker
+        '''
         tickerData = yf.Ticker(self.tickerSymbol)
         tickerDf = yf.download(self.tickerSymbol, start=self.start, end=self.end)
         tickerDf = tickerDf['Adj Close']
@@ -1164,6 +1331,9 @@ class LSTM_Model_MS_GT():
 
 
     def get_ticker_values(self):
+        '''
+        Get ticker values in a list
+        '''
         self.y_all = []
         for tickerSymbol in self.tickerSymbolList:
             tickerData = yf.Ticker(tickerSymbol)
@@ -1188,6 +1358,9 @@ class LSTM_Model_MS_GT():
 
 
     def prepare_test_train(self):
+        '''
+        Create the dataset from the extracted time-series data
+        '''
         self.y_size = 0
         if self.sameTickerTestTrain == True: # For each ticker, split data into train and test set. Test and validation are the same
             self.xtrain = []
@@ -1243,6 +1416,9 @@ class LSTM_Model_MS_GT():
 
 
     def create_p_test_train(self):
+        '''
+        Prepare shuffled train and test data
+        '''
         BATCH_SIZE = self.batch_size
         BUFFER_SIZE = self.y_size
         p_train = tf.data.Dataset.from_tensor_slices((self.xtrain, self.ytrain))
@@ -1251,6 +1427,9 @@ class LSTM_Model_MS_GT():
         self.p_test = p_test.batch(BATCH_SIZE).repeat()
 
     def model_LSTM(self):
+        '''
+        Create the stacked LSTM model and train it using the shuffled train set
+        '''
         self.model = tf.keras.models.Sequential()
         if self.naive:
             self.model.add(tf.keras.layers.LSTM(20, input_shape = self.xtrain.shape[-2:]))
@@ -1271,6 +1450,13 @@ class LSTM_Model_MS_GT():
         print('Model Built')
 
     def infer_values(self, xtest, ytest, ts = None):
+        '''
+        Infer values by using the test set
+        :param xtest: test dataset
+        :param ytest: actual value dataset
+        :param ts: tikcer symbol
+        :return: model variables that store predicted data
+        '''
         self.pred = []
         self.pred_update = []
         self.usetest = xtest.copy()
@@ -1315,6 +1501,9 @@ class LSTM_Model_MS_GT():
                     self.ytrain[:self.values - 1])) ** 2)) ** 0.5 / self.batch_size
 
     def plot_test_values(self):
+        '''
+        Plot predicted values against actual values
+        '''
         plt.figure()
         if self.forward_look>1:
             plt.plot(self.yt[:self.values-1,0,0],label='actual (%s)'%self.ts)
@@ -1375,6 +1564,9 @@ class LSTM_Model_MS_GT():
         self.model_LSTM()
 
     def prepare_test(self):
+        '''
+        Create the dataset from the extracted time-series data
+        '''
         training_size = int(self.ytemp.size * self.train_test_split)
         training_mean = self.ytemp[:training_size].mean()  # get the average
         training_std = self.ytemp[:training_size].std()  # std = a measure of how far away individual measurements tend to be from the mean value of a data set.
@@ -1383,6 +1575,9 @@ class LSTM_Model_MS_GT():
         self.xtest, self.ytest = data, target
 
     def get_tick_values(self):
+        '''
+        Get ticker values in a list
+        '''
         tickerData = yf.Ticker(self.tickerSymbol)
         tickerDf = yf.download(self.tickerSymbol, start=self.start, end=self.end)
         tickerDf = tickerDf['Adj Close']
@@ -1394,10 +1589,18 @@ class LSTM_Model_MS_GT():
         self.prepare_test()
 
     def full_workflow_and_plot(self, model = None):
+        '''
+        Workflow to carry out the entire process end-to-end
+        :param model: Choose which model to use to predict inferred values
+        :return:
+        '''
         self.full_workflow(model = model)
         self.plot_test_values()
 
     def plot_bot_decision(self):
+        '''
+        calculate investment growth from the inferred prediction value and plot the resulting growth
+        '''
         if self.forward_look > 1:
             ideal = self.yt[:self.values - 1, 0, 0]
             pred = np.asarray(self.pred[1:, 0]).reshape(-1,)
