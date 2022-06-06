@@ -187,6 +187,7 @@ class LSTM_Model():
         self.plot_bot = plot_bot
         self.infer_train = infer_train
         self.custom_loss = custom_loss
+        tf.random.set_seed(1728)
 
     def custom_loss_def(self,y_true,y_pred):
         '''
@@ -195,7 +196,7 @@ class LSTM_Model():
         :param y_pred: np.array of predicted value
         :return: Customised loss function as tf.tensor
         '''
-        self.weights = np.float32(1.0 + 0.1*np.linspace(0,self.forward_look-1,self.forward_look)/20.0)
+        self.weights = np.float32(1.0 + 1*np.linspace(0,self.forward_look-1,self.forward_look)/150.0)
         return tf.math.reduce_mean(tf.math.square(tf.multiply(self.weights,y_true - y_pred)))
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
@@ -369,12 +370,17 @@ class LSTM_Model():
             plt.legend()
             plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)))
+            plt.clf()
             plt.figure()
             plt.plot(self.pred[1:, 0]-self.pred_update[1:,0], label='difference (%s)' % self.ts)
             plt.xlabel("Days")
             plt.ylabel("Prediction difference")
             plt.savefig('../images/Difference_%d_%d_%d_%d_%s_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)))
+            plt.clf()
+            np.savez('../save_mat/store_%d_%d_%d_%d_%s_%s.png'%(
+            self.depth,int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
+            y = self.yt[:self.values-1,0,0],pred = self.pred[1:,0],pred_up = self.pred_update[1:,0])
         else:
             plt.plot(self.yt[:self.values-1],label='actual (%s)'%self.ts)
             plt.plot(self.pred[1:],label='predicted (%s)'%self.ts)
@@ -385,12 +391,17 @@ class LSTM_Model():
             plt.legend()
             plt.savefig('../images/Stock_prediction_%d_%d_%d_%d_%s_%s.png'%(
             self.depth,int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)))
+            plt.clf()
             plt.figure()
             plt.plot(self.pred[1:] - self.pred_update[1:], label='difference (%s)' % self.ts)
             plt.xlabel("Days")
             plt.ylabel("Prediction difference")
             plt.savefig('../images/Difference_%d_%d_%d_%d_%s_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)))
+            plt.clf()
+            np.savez('../save_mat/store_%d_%d_%d_%d_%s_%s.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
+            y=self.yt[:self.values - 1], pred=self.pred[1:], pred_up=self.pred_update[1:])
         print('The relative test RMS error is %f'%self.RMS_error)
         print('The relative test RMS error for the updated dataset is %f' % self.RMS_error_update)
         if self.infer_train:
@@ -462,6 +473,10 @@ class LSTM_Model():
         plt.ylabel("Percentage growth")
         plt.legend()
         plt.savefig('../images/Bot_prediction_%d_%d_%d_%d_%s_%s.png' % (self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)))
+        np.savez('../save_mat/bot_%d_%d_%d_%d_%s_%s.png' % (
+        self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
+        ideal = bot_ideal, pred  = bot_pred, pred_up = bot_pred_update)
+        plt.clf()
 
 
 class LSTM_ED_Model():
@@ -507,11 +522,13 @@ class LSTM_ED_Model():
         self.values = values
         self.depth = depth
         self.naive = naive
+        self.custom_loss = False
         self.LSTM_latent_dim = LSTM_latent_dim;
         if tickerSymbolList == None:
             self.tickerSymbolList = [tickerSymbol]
         else:
             self.tickerSymbolList = tickerSymbolList
+        tf.random.set_seed(1728)
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
         '''
@@ -729,6 +746,10 @@ class LSTM_ED_Model():
             plt.legend()
             plt.savefig('../images/ED_Stock_prediction_%d_%d_%d_%d_%s.png' % (
                 self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+            plt.clf()
+            np.savez('../save_mat/EDstore_%d_%d_%d_%d_%s_%s.png' % (
+                self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
+                     y=self.yt[:self.values - 1, 0, 0], pred=self.pred[1:, 0], pred_up=self.pred_update[1:, 0])
 
         print('The relative RMS error is %f' % self.RMS_error)
 
@@ -736,8 +757,8 @@ class LSTM_ED_Model():
         '''
         Plot the network architecture
         '''
-    	dot_img_file = '../images/LSTM_ED_arch_depth%d_naive%d.png' %( self.depth, int(self.naive))
-    	tf.keras.utils.plot_model(self.model, to_file=dot_img_file, show_shapes=True)
+        dot_img_file = '../images/LSTM_ED_arch_depth%d_naive%d.png' %( self.depth, int(self.naive))
+        tf.keras.utils.plot_model(self.model, to_file=dot_img_file, show_shapes=True)
     	        
     def full_workflow(self, model=None):
         self.get_ticker_values()
@@ -787,6 +808,10 @@ class LSTM_ED_Model():
         plt.legend()
         plt.savefig('../images/ED_Bot_prediction_%d_%d_%d_%d.png' % (
         self.depth, int(self.naive), self.past_history, self.forward_look))
+        np.savez('../save_mat/EDbot_%d_%d_%d_%d_%s_%s.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
+                 ideal=bot_ideal, pred=bot_pred, pred_up=bot_pred_update)
+        plt.clf()
 
 
 class LSTM_Model_MS():
@@ -835,6 +860,7 @@ class LSTM_Model_MS():
         self.values = values
         self.depth = depth
         self.naive = naive
+        self.custom_loss = False
         self.plot_values = plot_values
         self.plot_bot = plot_bot
         self.infer_train = infer_train
@@ -843,6 +869,7 @@ class LSTM_Model_MS():
             self.tickerSymbolList = [tickerSymbol]
         else:
             self.tickerSymbolList = tickerSymbolList
+        tf.random.set_seed(1728)
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
         '''
@@ -1076,6 +1103,10 @@ class LSTM_Model_MS():
             plt.ylabel("Prediction difference")
             plt.savefig('../images/MSDifference_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+            plt.clf()
+            np.savez('../save_mat/MSstore_%d_%d_%d_%d_%s_%s.png' % (
+                self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
+                     y=self.yt[:self.values - 1, 0, 0], pred=self.pred[1:, 0], pred_up=self.pred_update[1:, 0])
         else:
             plt.plot(self.yt[:self.values-1],label='actual (%s)'%self.ts)
             plt.plot(self.pred[1:],label='predicted (%s)'%self.ts)
@@ -1092,6 +1123,10 @@ class LSTM_Model_MS():
             plt.ylabel("Prediction difference")
             plt.savefig('../images/MSDifference_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+            plt.clf()
+            np.savez('../save_mat/MSstore_%d_%d_%d_%d_%s_%s.png' % (
+                self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
+                     y=self.yt[:self.values - 1], pred=self.pred[1:], pred_up=self.pred_update[1:])
         print('The relative test RMS error is %f'%self.RMS_error)
         print('The relative test RMS error for the updated dataset is %f' % self.RMS_error_update)
         if self.infer_train:
@@ -1179,6 +1214,10 @@ class LSTM_Model_MS():
         plt.ylabel("Percentage growth")
         plt.legend()
         plt.savefig('../images/MSBot_prediction_%d_%d_%d_%d_%s.png' % (self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+        np.savez('../save_mat/MSbot_%d_%d_%d_%d_%s_%s.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
+                 ideal=bot_ideal, pred=bot_pred, pred_up=bot_pred_update)
+        plt.clf()
 
 
 class LSTM_Model_MS_GT():
@@ -1217,6 +1256,7 @@ class LSTM_Model_MS_GT():
         self.tickerSymbol = tickerSymbol
         self.tickerName = tickerName
         self.start = start
+        self.custom_loss = False
         self.end = end
         self.past_history = past_history
         self.forward_look = forward_look
@@ -1239,6 +1279,7 @@ class LSTM_Model_MS_GT():
         else:
             self.tickerSymbolList = tickerSymbolList
             self.tickerNameDict = tickerNameDict
+        tf.random.set_seed(1728)
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
         '''
@@ -1521,6 +1562,10 @@ class LSTM_Model_MS_GT():
             plt.ylabel("Prediction difference")
             plt.savefig('../images/GTMSDifference_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+            plt.clf()
+            np.savez('../save_mat/GTMSstore_%d_%d_%d_%d_%s_%s.png' % (
+                self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
+                     y=self.yt[:self.values - 1, 0, 0], pred=self.pred[1:, 0], pred_up=self.pred_update[1:, 0])
         else:
             plt.plot(self.yt[:self.values-1,0],label='actual (%s)'%self.ts)
             plt.plot(self.pred[1:,0],label='predicted (%s)'%self.ts)
@@ -1537,6 +1582,10 @@ class LSTM_Model_MS_GT():
             plt.ylabel("Prediction difference")
             plt.savefig('../images/GTMSDifference_%d_%d_%d_%d_%s.png' % (
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+            plt.clf()
+            np.savez('../save_mat/GTMSstore_%d_%d_%d_%d_%s_%s.png' % (
+                self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
+                     y=self.yt[:self.values - 1], pred=self.pred[1:], pred_up=self.pred_update[1:])
         print('The relative test RMS error is %f'%self.RMS_error)
         print('The relative test RMS error for the updated dataset is %f' % self.RMS_error_update)
         if self.infer_train:
@@ -1624,4 +1673,8 @@ class LSTM_Model_MS_GT():
         plt.ylabel("Percentage growth")
         plt.legend()
         plt.savefig('../images/GTMSBot_prediction_%d_%d_%d_%d_%s.png' % (self.depth, int(self.naive), self.past_history, self.forward_look, self.ts))
+        np.savez('../save_mat/GTMSbot_%d_%d_%d_%d_%s_%s.png' % (
+            self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
+                 ideal=bot_ideal, pred=bot_pred, pred_up=bot_pred_update)
+        plt.clf()
 
