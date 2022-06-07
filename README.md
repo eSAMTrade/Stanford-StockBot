@@ -21,23 +21,23 @@ The predictions using a series of LSTM networks and for different tickers can be
 ```
 python3 train_single_test.py
 ```
-The encoder-decoder results from the report in Fig. 3 can be produced by:
+The encoder-decoder results from the report in Fig. 3 can be reproduced by:
 ```
 python3 train_single_test_ED.py
 ```
-Using multiple stocks of a given industry to train model and then carry out inference, as shown in Fig. 4a can be produced by:
+Using multiple stocks of a given industry to train model and then carry out inference, as shown in Fig. 4a can be reproduced by:
 ```
 python3 train_categorical_test.py
 ```
-The cross-correlation between stocks and effect fo inferring stock prices from models trained on different industries, as shown in Figs. 4b and 4c can be produced by:
+The cross-correlation between stocks and effect fo inferring stock prices from models trained on different industries, as shown in Figs. 4b and 4c can be reproduced by:
 ```
 python3 correlation_strengths.py
 ```
-The comparison between predictions using the custom loss function and the regular loss function while predicting multiple dayds in advance, as shwon in Fig. 5 can be produced by:
+The comparison between predictions using the custom loss function and the regular loss function while predicting multiple dayds in advance, as shwon in Fig. 5 can be reproduced by:
 ```
 python3 test_forward_decay.py
 ```
-The google-trends data along with the stock ticker data to predict stock prices, as shown in Fig. &, can be produced by:
+The google-trends data along with the stock ticker data to predict stock prices, as shown in Fig. 7, can be reproduced by:
 ```
 python3 train_categorical_GT_test.py
 ```
