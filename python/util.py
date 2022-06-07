@@ -196,7 +196,7 @@ class LSTM_Model():
         :param y_pred: np.array of predicted value
         :return: Customised loss function as tf.tensor
         '''
-        self.weights = np.float32(1.0 + 1*np.linspace(0,self.forward_look-1,self.forward_look)/150.0)
+        self.weights = np.float32(1.0 + 1.0*np.linspace(0,self.forward_look-1,self.forward_look)/200.0)
         return tf.math.reduce_mean(tf.math.square(tf.multiply(self.weights,y_true - y_pred)))
 
     def data_preprocess(self, dataset, iStart, iEnd, sHistory, forward_look=1):
