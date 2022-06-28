@@ -296,10 +296,10 @@ class LSTM_Model():
         self.model.add(tf.keras.layers.Dense(self.forward_look))
         if self.custom_loss:
             self.model.compile(optimizer='Adam',
-                      loss=self.custom_loss_def, metrics=['mse'])
+                      loss=self.custom_loss_def, metrics=['mse','mae'])
         else:
             self.model.compile(optimizer='Adam',
-                               loss='mse', metrics=['mse'])
+                               loss='mse', metrics=['mse','mae'])
 
         self.create_p_test_train()
         self.hist = self.model.fit(self.p_train, epochs = self.epochs, steps_per_epoch = self.steps_per_epoch,
@@ -339,6 +339,8 @@ class LSTM_Model():
         self.pred_update = np.array(self.pred_update)
         self.RMS_error = self.hist.history['val_mse'][-1]
         self.RMS_error_train = self.hist.history['mse'][-1]
+        self.MAE_error = self.hist.history['val_mae'][-1]
+        self.MAE_error_train = self.hist.history['mae'][-1]
         if self.infer_train:
             self.pred = np.array(self.pred)
             self.pred_update_train = np.array(self.pred_update_train)
@@ -403,9 +405,11 @@ class LSTM_Model():
             self.depth, int(self.naive), self.past_history, self.forward_look, self.ts, int(self.custom_loss)),
             y=self.yt[:self.values - 1], pred=self.pred[1:], pred_up=self.pred_update[1:])
         print('The relative test RMS error is %f'%self.RMS_error)
+        print('The relative test MAE is %f' % self.MAE_error)
         print('The relative test RMS error for the updated dataset is %f' % self.RMS_error_update)
         if self.infer_train:
             print('The relative train RMS error is %f' % self.RMS_error_train)
+            print('The relative train MAE is %f' % self.MAE_error_train)
             print('The relative train RMS error for the updated dataset is %f' % self.RMS_error_update_train)
             
     def arch_plot(self):
