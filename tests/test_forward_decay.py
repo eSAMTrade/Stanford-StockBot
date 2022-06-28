@@ -40,7 +40,7 @@ LSTM_1.plot_bot_decision()
 plt.clf()
 LSTM_2 = LSTM_Model(tickerSymbol = tickeranalysis, start = start, end = end, depth = 0, naive = True, forward_look = fwd, past_history = past)
 LSTM_2.full_workflow_and_plot()
-LSTM_3.plot_bot_decision()
+LSTM_2.plot_bot_decision()
 plt.clf()
 
 ############ Plotting the value convergence as we move closer to target prediction day ################
@@ -50,6 +50,7 @@ for i in range(LSTM_2.values - fwd - 1):
     plot_vec = LSTM_2.pred[np.linspace(i,fwd+i-1,fwd,dtype=int),np.linspace(fwd-1,0,fwd,dtype=int)]
     plot_handle += (1/(LSTM_2.values - fwd - 1))*plot_vec/plot_vec[-1]
 
+np.savez('../save_mat/plot_conv.npz',conv = plot_handle[np.linspace(len(plot_handle)-1,0,len(plot_handle),dtype=int)])
 popt,_ = curve_fit(optimize,np.linspace(0,len(plot_handle)-1,len(plot_handle),dtype=int),plot_handle[np.linspace(len(plot_handle)-1,0,len(plot_handle),dtype=int)])
 a,b=popt
 plt.plot(plot_handle[np.linspace(len(plot_handle)-1,0,len(plot_handle),dtype=int)]) #
