@@ -44,6 +44,7 @@ for i in range(samples):
         rmse_matrix[i,j] = model[i].RMS_error_update
 
 print()
+np.savez('../save_mat/cross_corr.npz',cc = cc_matrix, rms = rmse_matrix)
 plt.figure(1)
 sns.heatmap(cc_matrix, vmin=cc_matrix.reshape(-1,).min(), vmax=cc_matrix.reshape(-1,).max(),
     center=(cc_matrix.reshape(-1,).max()+cc_matrix.reshape(-1,).min())/2,
