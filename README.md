@@ -41,6 +41,10 @@ The google-trends data along with the stock ticker data to predict stock prices,
 ```
 python3 train_categorical_GT_test.py
 ```
+
+## Publications 
+* StockBot: Using LSTMs to Predict Stock Prices (URL to be filled)
+
 ## Support
 For any support regarding the implementation of the source code, contact the developers at: shaswatm@stanford.edu, avijay@stanford.edu or nandan99@gmail.com
 
